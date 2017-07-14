@@ -34,6 +34,9 @@ The list of supported systems are as follows:
     In order to run the experiment for V-SDCD, navigate to the system directory:
     `cd SDCD` then run the experiment `sudo python sdcd_experimental.py`.
     The terminal will guide you to choose your experiment.
+    
+    The Map files are hosted inside Mininet-WiFi. Once you have it installed, Mininet environment variables will be able to locate the files and grab them. 
+    They can be found [here](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mininet/sumo/data/new-york.rou.xml)
 * Known Issues
 
     - If you encountered problems with your wifi-drivers which might stops the nodes from getting connected to the experiment basestations, you need to stop your network manager and use __wpa_supplicant__ to retain your interenet connection which is needed to load the simulation environment map.    
