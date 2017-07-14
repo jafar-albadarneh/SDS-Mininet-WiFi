@@ -48,8 +48,8 @@ The list of supported systems are as follows:
 Collaborators
 ---
 - __Jafar albadarneh__, _Email_: jafar92.jaa@gmail.com, Jordan University of Science and Technology
-- __Ramon Fontes__, _Email_:ramonrf@dca.fee.unicamp.br, University of Campinas, Campinas, Brazil
 - __Yaser Jararweh__, _Email_:yaser.amd@gmail.com,  Carnegie Mellon University
 - __Mahmoud Alayyoub__, _Email_:maalshbool@just.edu.jo, Jordan University of Science and Technology
 - __Mohammad Alsmadi__, _Email_:maalsmadi9@just.edu.jo, Jordan University of Science and Technology
+- __Ramon Fontes__, _Email_:ramonrf@dca.fee.unicamp.br, University of Campinas, Campinas, Brazil
 - __Christian Rothenberg__, _Email_:chesteve@dca.fee.unicamp.br ,University of Campinas, Campinas, Brazil
