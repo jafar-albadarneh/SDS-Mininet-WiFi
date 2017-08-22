@@ -1,23 +1,26 @@
 #!/usr/bin/python
 
 import os
+import sys
+sys.path.append('../')
+
 from time import sleep
 
-from SDS_Car import SD_Car
+from Components.SDS_C_Car import SD_C_Car
+from Components.SDS_Car import SD_Car
 # SDS Dependencies
-from SDS_Car_Switch import SD_Car_Switch
-from SDS_Host import Cloud_Host
-from SDS_Station import SDStorage_Station
-from SDS_Switch import SDStor_Switch
-from SDS_VANET_Controller import SDVanet_Controller
-from SDS_eNodeB import SD_eNodeB
+from Components.SDS_Car_Switch import SD_Car_Switch
+from Components.SDS_Host import Cloud_Host
+from Components.SDS_Station import SDStorage_Station
+from Components.SDS_VANET_Controller import SDVanet_Controller
+from Components.SDS_eNodeB import SD_eNodeB
 from mininet.cli import CLI
 from mininet.link import TCLink
 from mininet.log import setLogLevel
 from mininet.net import Mininet
 from mininet.node import UserAP, RemoteController
 
-from SDS_C_Car import SD_C_Car
+from Components.SDS_Switch import SDStor_Switch
 
 Vanet_controller=SDVanet_Controller
 SD_Switch=SDStor_Switch
