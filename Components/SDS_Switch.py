@@ -81,10 +81,12 @@ class SDStor_Switch(OVSKernelSwitch):
     def sendMsg_toCon(self, status, Used_space, HostID, net):
         " Send a message to the controller to notify it with any change"
         if status == "Add":
-            network = net.controllers[0].Handle_switch_packets("Add", None, None, net)
+            network = net.controllers[0].Handle_switch_packets(
+                "Add", None, None, net)
             return network
         elif status == "Update":
-            net.controllers[0].Handle_switch_packets("Update", Used_space, HostID, net)
+            net.controllers[0].Handle_switch_packets(
+                "Update", Used_space, HostID, net)
 
     def sendMesg_toHost(message):
         pass

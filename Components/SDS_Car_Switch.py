@@ -27,7 +27,6 @@ class SD_Car_Switch(OVSKernelSwitch):
             self.MEC.append(msg[attrib])
         self.AR_Library.append(msg[len(msg) - 1])
 
-
     def Handle_controller_packets(self, operation, message):
         packetstatus = operation
         SDSObject = message
@@ -37,15 +36,17 @@ class SD_Car_Switch(OVSKernelSwitch):
     def sendMsg_toCon(self, status, Used_space, HostID, net):
         " Send a message to the controller to notify it with any change"
         if status == "Add":
-            network = net.controllers[0].Handle_switch_packets("Add", None, None, net)
+            network = net.controllers[0].Handle_switch_packets(
+                "Add", None, None, net)
             return network
         elif status == "Update":
-            net.controllers[0].Handle_switch_packets("Update", Used_space, HostID, net)
-
+            net.controllers[0].Handle_switch_packets(
+                "Update", Used_space, HostID, net)
 
     def print_switch_info(self, mode, net):
         if (mode == "AR"):
-            print ("[MAC Address]\t{AR Library} \n ***************************")
+            print (
+                "[MAC Address]\t{AR Library} \n ***************************")
             for sw in net.switches:
                 if (sw.custom_type != "sd_car_switch"):
                     continue
@@ -56,4 +57,3 @@ class SD_Car_Switch(OVSKernelSwitch):
                         print ("content: %s" % (AR[i]))
                     count += 1
                     print ("------")
-

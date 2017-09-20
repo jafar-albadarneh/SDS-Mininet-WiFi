@@ -26,7 +26,8 @@ class SDStorage_Station(Station):
             index = 0
             for accessPoint in net.accessPoints:
                 if (accessPoint.params['mac'] == ap.params['mac']):
-                    result = net.accessPoints[index].Handle_Content_Request(content_identifier, net)
+                    result = net.accessPoints[index].Handle_Content_Request(
+                        content_identifier, net)
                     # print ("result in station: %s"%result)
                     break
                 else:
@@ -34,7 +35,6 @@ class SDStorage_Station(Station):
 
             # print ("AP[%s] returned %s for the requested AR content"%(index,result))
             return result
-
 
         else:
             """SD Search"""

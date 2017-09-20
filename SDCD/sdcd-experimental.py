@@ -22,17 +22,19 @@ from mininet.node import UserAP, RemoteController
 
 from Components.SDS_Switch import SDStor_Switch
 
-Vanet_controller=SDVanet_Controller
-SD_Switch=SDStor_Switch
-SD_station=SDStorage_Station
+Vanet_controller = SDVanet_Controller
+SD_Switch = SDStor_Switch
+SD_station = SDStorage_Station
 eNodeB = SD_eNodeB
-Cloud_host=Cloud_Host
+Cloud_host = Cloud_Host
+
 
 class InbandController(RemoteController):
 
     def checkListening(self):
         "Overridden to do nothing."
         return
+
 
 def topology():
     car_type = SD_Car
@@ -42,14 +44,16 @@ def topology():
         pass
     else:
         v2v = True
-        caching = raw_input("What do you prefere to run:\n (1)car-level caching enabled (2)car-level caching disbled \nChoice: ")
+        caching = raw_input(
+            "What do you prefere to run:\n (1)car-level caching enabled (2)car-level caching disbled \nChoice: ")
         if(caching == "1"):
             car_type = SD_C_Car
         else:
             car_type = SD_Car
 
     "Create a network."
-    net = Mininet(controller=Vanet_controller, link=TCLink, accessPoint=UserAP,switch=SD_Car_Switch ,station=SD_station ,enable_wmediumd=True, enable_interference=True)
+    net = Mininet(controller=Vanet_controller, link=TCLink, accessPoint=UserAP,
+                  switch=SD_Car_Switch, station=SD_station, enable_wmediumd=True, enable_interference=True)
 
     print "*** Creating nodes"
     cars = []
@@ -58,18 +62,26 @@ def topology():
         cars.append(x)
         stas.append(x)
     for x in range(0, 10):
-        cars[x] = net.addCar('car%s' % (x), wlans=1, ip='10.0.0.%s/8' % (x + 1),cls=car_type)
+        cars[x] = net.addCar('car%s' % (x), wlans=1,
+                             ip='10.0.0.%s/8' % (x + 1), cls=car_type)
 
-    e1 = net.addAccessPoint('e1', ssid='vanet-ssid', mac='00:00:00:11:00:01', mode='g', channel='1', passwd='123456789a', encrypt='wpa2', position='3332.62,3253.92,0', cls=eNodeB)
-    e2 = net.addAccessPoint('e2', ssid='vanet-ssid', mac='00:00:00:11:00:02', mode='g', channel='1', passwd='123456789a', encrypt='wpa2', position='3279.02,3736.27,0', cls=eNodeB)
-    e3 = net.addAccessPoint('e3', ssid='vanet-ssid', mac='00:00:00:11:00:03', mode='g', channel='11', passwd='123456789a', encrypt='wpa2', position='2806.42,3395.22,0', cls=eNodeB)
-    e4 = net.addAccessPoint('e4', ssid='vanet-ssid', mac='00:00:00:11:00:04', mode='g', channel='6', passwd='123456789a', encrypt='wpa2', position='2320.82,3565.75,0', cls=eNodeB)
-    e5 = net.addAccessPoint('e5', ssid='vanet-ssid', mac='00:00:00:11:00:05', mode='g', channel='6', passwd='123456789a', encrypt='wpa2', position='2887.62,2935.61,0', cls=eNodeB)
-    e6 = net.addAccessPoint('e6', ssid='vanet-ssid', mac='00:00:00:11:00:06', mode='g', channel='11', passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB)
+    e1 = net.addAccessPoint('e1', ssid='vanet-ssid', mac='00:00:00:11:00:01', mode='g', channel='1',
+                            passwd='123456789a', encrypt='wpa2', position='3332.62,3253.92,0', cls=eNodeB)
+    e2 = net.addAccessPoint('e2', ssid='vanet-ssid', mac='00:00:00:11:00:02', mode='g', channel='1',
+                            passwd='123456789a', encrypt='wpa2', position='3279.02,3736.27,0', cls=eNodeB)
+    e3 = net.addAccessPoint('e3', ssid='vanet-ssid', mac='00:00:00:11:00:03', mode='g', channel='11',
+                            passwd='123456789a', encrypt='wpa2', position='2806.42,3395.22,0', cls=eNodeB)
+    e4 = net.addAccessPoint('e4', ssid='vanet-ssid', mac='00:00:00:11:00:04', mode='g', channel='6',
+                            passwd='123456789a', encrypt='wpa2', position='2320.82,3565.75,0', cls=eNodeB)
+    e5 = net.addAccessPoint('e5', ssid='vanet-ssid', mac='00:00:00:11:00:05', mode='g', channel='6',
+                            passwd='123456789a', encrypt='wpa2', position='2887.62,2935.61,0', cls=eNodeB)
+    e6 = net.addAccessPoint('e6', ssid='vanet-ssid', mac='00:00:00:11:00:06', mode='g', channel='11',
+                            passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB)
 
     client = net.addHost('cloud', cls=Cloud_host)
     switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch)
-    c1 = net.addController('c1', controller=Vanet_controller, ip='127.0.0.1', port=6653)
+    c1 = net.addController(
+        'c1', controller=Vanet_controller, ip='127.0.0.1', port=6653)
     net.propagationModel("logDistancePropagationLossModel", exp=2.8)
 
     if(v2v):
@@ -133,7 +145,7 @@ def topology():
             i += 1
             j += 2
 
-    c1.Initialize_resources(net);
+    c1.Initialize_resources(net)
 
     if(v2v):
         raw_input("Press Enter to continue (wait 30sec after t=28)...")
@@ -173,7 +185,7 @@ def topology():
         print "*** Car2: Requesting Content for car6! ***"
         print "***********************************"
         sleep(1)
-        cars[2].RequestContent(net,2)
+        cars[2].RequestContent(net, 2)
         print "***********************************"
         print "*** Car2: Thank you Controller! ***"
         print "***********************************"
@@ -189,6 +201,7 @@ def topology():
 
     print "*** Stopping network"
     net.stop()
+
 
 if __name__ == '__main__':
     setLogLevel('info')

@@ -41,7 +41,6 @@ class SD_C_Car(Car):
         AR_content = [10, "DinasorAR.obj", 8650]
         self.AR_Library.append(AR_content)"""
 
-
     def RequestContent(self, net, op=1):
         print ("\nAR content \t|\t Time \t\t|   Status")
         print ("-----------\t|\t ----------\t| ----------")
@@ -69,7 +68,6 @@ class SD_C_Car(Car):
 
             print (" %s \t \t \t %.12f \t%s" % (i, end3 - start3, result))
 
-
     def getAssociatedAp(self):
         result = self.cmd('iw dev car2-wlan0 scan')
         res2 = result.split()[1]
@@ -86,20 +84,21 @@ class SD_C_Car(Car):
             for accessPoint in net.accessPoints:
                 if (op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.accessPoints[index].Handle_Content_Request(content_identifier, net)
+                        result = net.accessPoints[index].Handle_Content_Request(
+                            content_identifier, net)
                         break
                     else:
                         index += 1
                 else:  # v2v
                     if ("00:00:00:11:00:05" in accessPoint.params[
-                        'mac']):  # TODO: fetch associated MEC dynamically when bgscan-enabled
-                        result = net.accessPoints[index].Handle_Content_Request(content_identifier, net)
+                            'mac']):  # TODO: fetch associated MEC dynamically when bgscan-enabled
+                        result = net.accessPoints[index].Handle_Content_Request(
+                            content_identifier, net)
                         break
                     else:
                         index += 1
 
             return result
-
 
         else:
             """SD Search"""
