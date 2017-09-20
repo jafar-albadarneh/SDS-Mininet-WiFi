@@ -36,20 +36,20 @@ Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/79391
 
     In order to run the experiments, follow these instructions:
     
-    - for V-SDCD, navigate to the system directory (SDCD):
+    1) for V-SDCD, navigate to the system directory (SDCD):
     `cd SDCD` then run the experiment via `sudo python sdcd_experimental.py`.
-    The terminal will guide you to choose your experiment.
-    
-    The Map files are hosted inside Mininet-WiFi. Once you have it installed, Mininet environment variables will be able to locate the files and grab them. 
+    - The terminal will guide you to choose your experiment.
+    - The Map files are hosted inside Mininet-WiFi. Once you have it installed, Mininet environment variables will be able to locate the files and grab them. 
     They can be found [here](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mininet/sumo/data/new-york.rou.xml)
     
-    - for SDStorage experiment, navigate to system directory (SDStorage):
+    2) for SDStorage experiment, navigate to system directory (SDStorage):
     `cd SDStorage` then run the experiment via `sudo python sdstorage_experimental.py`
+    - Right after initializing the environemnt, a plot will be shown asking for drawing some roads for the cars. (10 roads - 4 mec nodes - 5 cars). Draw roads as connected points, and then place the mec nodes among those roads. After placing the last MEC node, the cars will be placed on the roads with random positions and speeds. 
+    > please note that, for you to be able to run the experiments properly, you need to wait for car1 to be connected to one of the mec node. -a nice tip here is to place the MEC nodes near to each other-.
     
-    Right after initializing the environemnt, a plot will be shown asking for drawing some roads for the cars. (10 roads - 4 mec nodes - 5 cars). Draw roads as connected points, and then place the mec nodes among those roads. After placing the last MEC node, the cars will be placed on the roads with random positions and speeds. 
-    > please note that, for you to be able to run the experiments properly, you need to wait for car1 to be connected to one of the mec node. -a nice tip here is to place the MEC nodes near to each other-. Once `car1` is in range of any MEC node, enter the amount of storage units the car is willing to store. Note that Each MEC node is set to have a predefined capacity of 125000 storage units. As specified in the study, auto-scaling storage capacity for MEC nodes will be triggered on-demand.
+    - Once `car1` is in range of any MEC node, enter the amount of storage units the car is willing to store. Note that Each MEC node is set to have a predefined capacity of 125000 storage units. As specified in the study, auto-scaling storage capacity for MEC nodes will be triggered on-demand.
 
-    - If you encountered problems with your wifi-drivers which might stops the nodes from getting connected to the experiment basestations, you need to stop your network manager and use __wpa_supplicant__ to retain your interenet connection which is needed to load the simulation environment map.    
+* If you encountered problems with your wifi-drivers which might stops the nodes from getting connected to the experiment basestations, you need to stop your network manager and use __wpa_supplicant__ to retain your interenet connection which is needed to load the simulation environment map.    
 
 ### Having some troubles!! ###
 Don't hesitiate and go ahead submit your PRs
