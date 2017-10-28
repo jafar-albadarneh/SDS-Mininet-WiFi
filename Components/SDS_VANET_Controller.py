@@ -8,6 +8,8 @@ from mininet.util import custom
 
 import time
 
+from Components.contentLibrary import contentLibrary
+
 
 class SDVanet_Controller( Controller ):
       "Controller to run a SDStorage functions."
@@ -18,31 +20,8 @@ class SDVanet_Controller( Controller ):
           self.RSUs=[]
           self.eNodeBs=[]
 
-
       def Initialize_resources(self,net):
-          """AR STUFF"""
-          AR_Library=[]
-          #[content_identifier,content_name,content_size]
-          AR_content = [1, "CityAR.fbx", 5000]
-          AR_Library.append(AR_content)
-          AR_content = [2, "CarAR.obj", 9000]
-          AR_Library.append(AR_content)
-          AR_content = [3, "StreetAR.fbx", 3000]
-          AR_Library.append(AR_content)
-          AR_content = [4, "HeritageAR.jpg", 850]
-          AR_Library.append(AR_content)
-          AR_content = [5, "MallAR.fbx", 5000]
-          AR_Library.append(AR_content)
-          AR_content = [6, "statueAR.obj", 9000]
-          AR_Library.append(AR_content)
-          AR_content = [7, "StAR.fbx", 3000]
-          AR_Library.append(AR_content)
-          AR_content = [8, "HallAR.jpg", 850]
-          AR_Library.append(AR_content)
-          AR_content = [9, "shopAR.fbx", 3500]
-          AR_Library.append(AR_content)
-          AR_content = [10, "DinasorAR.obj", 8650]
-          AR_Library.append(AR_content)
+          cLibrary= contentLibrary()
           #nodes= net.hosts + net.stations
           for host in net.hosts:
               if(host.custom_type == "sd_cloudHost"):
@@ -74,12 +53,12 @@ class SDVanet_Controller( Controller ):
                   msg.append(av_space)"""
                   msg.append(switch.type)
                   # Localizing AR contnet for each accesspoint
-                  AR_content = []
+                  contents = []
                   for i in range(0,10):
-                      AR_content.append(AR_Library[i])
+                      contents.append(cLibrary[i])
 
-                  # msg.append(AR_Library[count])
-                  msg.append(AR_content)
+                  # msg.append(cLibrary[count])
+                  msg.append(contents)
                   # new item
                   self.sendMsg_toSwitch("AR", switch, msg, net)
 
@@ -120,15 +99,15 @@ class SDVanet_Controller( Controller ):
               msg.append(av_space)
               msg.append(accessPoint.type)
               #Localizing AR contnet for each accesspoint
-              AR_content=[]
-              AR_content.append(AR_Library[count])
+              contents=[]
+              contents.append(cLibrary[count])
               count+=1
-              """AR_content.append(AR_Library[count])
+              """contents.append(cLibrary[count])
               count+=1
               if (count == 10):
                   count =0"""
-              #msg.append(AR_Library[count])
-              msg.append(AR_content)
+              #msg.append(cLibrary[count])
+              msg.append(contents)
               #new item
               self.send_msg_to_accesspoint("mec",accessPoint,msg,net)
 
@@ -162,7 +141,7 @@ class SDVanet_Controller( Controller ):
 
       def send_msg_to_accesspoint(self,operation,node,FT,net):
           "send a message to the access point to notify the changes "
-          if(node.type == 'accessPoint'):
+          if(node.type == 'ap'):
               node.Handle_controller_FT_update(operation,FT)
           elif(node.type == "vehicle"):
               #node is car
@@ -333,7 +312,7 @@ class SDVanet_Controller( Controller ):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
           elif(node_type == "station"):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "accessPoint"):
+          elif(node_type == "ap" ):
               Cap= (node.NO_of_RACKS* node.NO_of_Dir*node.NO_of_files*node.file_size)
           elif(node_type == "vehicle"):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)

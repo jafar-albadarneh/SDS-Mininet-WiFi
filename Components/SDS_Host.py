@@ -3,6 +3,7 @@
 import os
 from mininet.node import Host
 #from FunctionTable import *
+from Components.contentLibrary import contentLibrary
 
 
 class Cloud_Host(Host):
@@ -17,33 +18,6 @@ class Cloud_Host(Host):
         self.Used_space = Used_space
         self.custom_type = custom_type
         """AR Content"""
-        self.AR_Library = []
-        #[content_identifier,content_name,content_size]
-        AR_content = [1, "CityAR.fbx", 5000]
-        self.AR_Library.append(AR_content)
-        AR_content = [2, "CarAR.obj", 9000]
-        self.AR_Library.append(AR_content)
-        AR_content = [3, "StreetAR.fbx", 3000]
-        self.AR_Library.append(AR_content)
-        AR_content = [4, "HeritageAR.jpg", 850]
-        self.AR_Library.append(AR_content)
-        AR_content = [5, "MallAR.fbx", 5000]
-        self.AR_Library.append(AR_content)
-        AR_content = [6, "statueAR.obj", 9000]
-        self.AR_Library.append(AR_content)
-        AR_content = [7, "StAR.fbx", 3000]
-        self.AR_Library.append(AR_content)
-        AR_content = [8, "HallAR.jpg", 850]
-        self.AR_Library.append(AR_content)
-        AR_content = [9, "resturantAR.fbx", 3000]
-        self.AR_Library.append(AR_content)
-        AR_content = [10, "policeStationAR.fbx", 850]
-        self.AR_Library.append(AR_content)
-
-        """
-        for AR in self.AR_Library:
-            for i in range(len(AR)):
-                print ("index %s: content: %s"%(i,AR[i]))
-        """
+        self.cLibrary = contentLibrary()
 
         print "Cloud host has been initialized"
