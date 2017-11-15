@@ -29,7 +29,7 @@ SD_station = SDStorage_Station
 def topology():
 
     "Create a network."
-    net = Mininet(controller=VANET_Controller, link=TCLink, switch=SD_Switch, station=SD_station)
+    net = Mininet(controller=VANET_Controller, link=TCLink, switch=SD_Switch, station=SD_station, enable_wmediumd=True)
 
     print "*** Creating nodes"
     car = []
