@@ -29,7 +29,9 @@ SD_station = SDStorage_Station
 def topology():
 
     "Create a network."
-    net = Mininet(controller=VANET_Controller, link=TCLink, switch=SD_Switch, station=SD_station, enable_wmediumd=True)
+    net = Mininet(controller=VANET_Controller, link=TCLink,
+                  switch=SD_Switch, station=SD_station,
+                  enable_wmediumd=True, enable_interference=True)
 
     print "*** Creating nodes"
     car = []
@@ -43,7 +45,7 @@ def topology():
     for x in range(0, 5):
         min = random.randint(1,10)
         max= random.randint(11,30)
-        car[x] = net.addCar('car%s' % (x+1), wlans=1, ip='10.0.0.%s/8' % (x + 1), min_speed=min, max_speed=max, range=50,cls=SD_Car)
+        car[x] = net.addCar('car%s' % (x+1), wlans=1, ip='10.0.0.%s/8' % (x + 1), min_speed=min, max_speed=max,cls=SD_Car)
 
     c = 0
     for m in range(0, NUM_OF_MECS):
