@@ -81,6 +81,15 @@ def topology():
             net.addLink(mec[0],mec[m])
 
 
+    """uncomment to plot graph"""
+    net.plotGraph(max_x=700, max_y=700)
+
+    """Number of Roads"""
+    net.roads(10)
+
+    """Start Mobility"""
+    net.startMobility(time=0)
+
     print "*** Starting network"
     net.build()
     c1.start()
@@ -94,14 +103,7 @@ def topology():
         os.system('ifconfig %s 10.0.0.%s' % (sw, i))
         i+=1
 
-    """Number of Roads"""
-    net.roads(10)
 
-    """uncomment to plot graph"""
-    net.plotGraph(max_x=700, max_y=700)
-
-    """Start Mobility"""
-    net.startMobility(time=1)
     i = 1
     j = 2
     k = 1
