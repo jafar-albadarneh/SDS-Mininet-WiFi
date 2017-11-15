@@ -3,6 +3,7 @@
 from operator import itemgetter
 
 from mininet.node import OVSKernelSwitch
+from config import Modes, Operations, Type
 
 
 # guppy: actual memory consumption
@@ -10,15 +11,15 @@ from mininet.node import OVSKernelSwitch
 class SDStor_Switch(OVSKernelSwitch):
     "Switch to connect different types of storage hosts like StorageHost"
 
-    def __init__(self, name, custom_type="sd_switch", **pars):
+    def __init__(self, name, custom_type=Type.SD_SWITCH, **pars):
         OVSKernelSwitch.__init__(self, name, **pars)
         print ("custom swtich has been initialized")
         self.Function_table = []
         self.counter = 0
         self.custom_type = custom_type
         self.MEC = []
-        """AR Content"""
-        self.AR_Library = []
+        """Content"""
+        self.cLibrary = []
 
     def insert_entry(self, SDSObject):
         self.Function_table.append([])
@@ -34,7 +35,7 @@ class SDStor_Switch(OVSKernelSwitch):
         for attrib in range(len(msg) - 1):
             self.MEC.append(msg[attrib])
             # print ("attrib %s -> %s"%(attrib,self.MEC[attrib]))
-        self.AR_Library.append(msg[len(msg) - 1])
+        self.cLibrary.append(msg[len(msg) - 1])
 
     def update_entry(self, SDSObject):
         HostIP = SDSObject[0]
@@ -73,7 +74,7 @@ class SDStor_Switch(OVSKernelSwitch):
             self.insert_entry(SDSObject)
         elif packetstatus == "Update":
             self.update_entry(SDSObject)
-        elif (packetstatus == "AR"):
+        elif (packetstatus == Operations.CONTENT_DELIVERY):
             self.update_AR(SDSObject)
         else:
             self.remove_entry(SDSObject)

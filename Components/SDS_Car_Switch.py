@@ -3,6 +3,7 @@
 import sys
 from mininet.node import OVSKernelSwitch
 from operator import itemgetter
+from config import Type
 
 
 # guppy: actual memory consumption
@@ -11,7 +12,7 @@ from operator import itemgetter
 class SD_Car_Switch(OVSKernelSwitch):
     "Switch to connect different types of storage hosts like StorageHost"
 
-    def __init__(self, name, custom_type="sd_car_switch", **pars):
+    def __init__(self, name, custom_type=Type.SD_CAR_SWITCH, **pars):
         OVSKernelSwitch.__init__(self, name, **pars)
         print ("custom swtich has been initialized")
         self.Function_table = []

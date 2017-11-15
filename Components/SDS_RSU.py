@@ -6,12 +6,12 @@ from mininet.net import Mininet
 from mininet.util import custom
 from array import *
 from operator import itemgetter
-from guppy import hpy
+from config import Modes, Operations,Type
 import time
 #TODO the implementation of this class should be identical from eNodeB class representing different functions.
 class SD_RSU (UserAP):
     "custom AccessPoint to support SDSecure Storage"
-    def __init__(self,name,custom_type="sd_rsu",NO_of_Dir=100, NO_of_files=50,file_size=25,NO_of_RACKS=1, Used_space=0,**pars):
+    def __init__(self, name, custom_type=Type.SD_RSU, NO_of_Dir=100, NO_of_files=50, file_size=25, NO_of_RACKS=1, Used_space=0, **pars):
         UserAP.__init__(self, name, **pars)
 #        OVSKernelAP.__init__(self, name, **pars)
         """MEC Attributes"""
@@ -24,8 +24,8 @@ class SD_RSU (UserAP):
         self.MEC=[]
         """"""
 
-        """AR Content"""
-        self.AR_Library=[]
+        """Contents"""
+        self.cLibrary=[]
 
         """"""
         self.Function_table=[]
@@ -65,13 +65,13 @@ class SD_RSU (UserAP):
         #resort AP-FT
         sorted(self.Function_table,itemgetter(4),reverse=True)
 
-    def Handle_controller_FT_update(self,operation, SDSObject):
+    def handleControllerUpdateRequest(self,operation, SDSObject):
         if(operation == 'Add'):
             self.insert_entry(SDSObject)
         elif(operation == 'Update'):
             self.update_entry(SDSObject)
-        elif(operation == 'mec'):
-            self.populate_mec(SDSObject)
+        elif(operation == Operations.MEC):
+            self.initializeMecContents(SDSObject)
         elif(operation == 'mec_Update'):
             self.update_mec(SDSObject)
         else:
@@ -83,29 +83,29 @@ class SD_RSU (UserAP):
         for attrib in range(len(msg)):
                 self.MEC.append(msg[attrib])
 
-    def populate_mec(self, msg):
+    def initializeMecContents(self, msg):
         self.MEC=[]
         #print ("updating mec: adding attributes")
         #print ("********************************")
         for attrib in range(len(msg)-1):
             self.MEC.append(msg[attrib])
             #print ("attrib %s -> %s"%(attrib,self.MEC[attrib]))
-        self.AR_Library.append(msg[len(msg)-1])
+        self.cLibrary.append(msg[len(msg) - 1])
 
-    def print_mec_info(self,mode,net):
-        if(mode == "mec"):
+    def listMecContents(self, mode, net):
+        if(mode == Modes.MEC):
             print ("[MAC Address ,   Station Capacity ,     IsStationFull ,    Num of files ,     Available space]")
             for ap in net.accessPoints:
-                if(ap.custom_type == "sd_switch"):
+                if(ap.custom_type == Type.SD_SWITCH):
                     continue
                 #ap=self.MEC
                 #print ("length of MEC is:%s"%len(ap))
                 #print('[%s ,\t %s ,\t %s ,\t %s ,\t %s,\t %s,\t %s]' % (ap.MEC[0],ap.MEC[1],ap.MEC[2],ap.MEC[3],ap.MEC[4],ap.MEC[5],ap.AR_Library[0][1]))
                 print('[%s ,\t %s ,\t %s ,\t %s ,\t %s,\t %s]' % (ap.MEC[0], ap.MEC[1], ap.MEC[2], ap.MEC[3], ap.MEC[4], ap.MEC[5]))
-        elif(mode == "AR"):
+        elif(mode == Modes.CONTENT_DELIVERY):
             print ("[MAC Address]\t{AR Library} \n ***************************")
             for ap in net.accessPoints:
-                if (ap.custom_type == "sd_switch"):
+                if (ap.custom_type == Type.SD_SWITCH):
                     continue
                 print ("%s \t "%ap.MEC[0])
                 count = 0
@@ -176,8 +176,8 @@ class SD_RSU (UserAP):
             net.controllers[0].Handle_AP_message("Add",None,None,None,net)
         elif (operation == "mec_Update"):
             net.controllers[0].Handle_AP_message("mec_Update",data,None,mac_id,net)
-        elif(operation == "AR"):
-            res= net.controllers[0].Handle_AP_message("AR",data,None,mac_id,net)
+        elif(operation == Operations.CONTENT_DELIVERY):
+            res= net.controllers[0].Handle_AP_message(Operations.CONTENT_DELIVERY,data,None,mac_id,net)
             #print ("result in accesspoint(msg response): %s"%res)
             return res
 
@@ -190,7 +190,7 @@ class SD_RSU (UserAP):
         #search current accessPoint
         index = 0
         found = False
-        for AR_content in self.AR_Library:
+        for AR_content in self.cLibrary:
             for c in AR_content:
                 for i in range(len(c)):
                     if(i == 0):
@@ -214,7 +214,7 @@ class SD_RSU (UserAP):
 
             #ask the controller to search another MEC node
             A_MEC_mac_address=self.MEC[0]
-            res=self.sendMsg_toCon("AR",content_identifier,None,A_MEC_mac_address,net)
+            res=self.sendMsg_toCon(Operations.CONTENT_DELIVERY,content_identifier,None,A_MEC_mac_address,net)
             #print ("result in accessPoint(CO MEC): %s"%res)
             return res
         #print ("result in accesspoint(Local MEC): %s"%found)

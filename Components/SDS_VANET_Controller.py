@@ -5,7 +5,7 @@ from mininet.topo import Topo
 from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.util import custom
-
+from config import Modes,Operations, Type
 import time
 
 from Components.contentLibrary import contentLibrary
@@ -13,18 +13,17 @@ from Components.contentLibrary import contentLibrary
 
 class SDVanet_Controller( Controller ):
       "Controller to run a SDStorage functions."
-
-      def __init__( self, name,custom_type="vanet_controller", **kwargs ):
+      def __init__( self, name,custom_type=Type.SD_VANET_CONTROLLER, **kwargs ):
           Controller.__init__( self, name,**kwargs )
           self.custom_type=custom_type
           self.RSUs=[]
           self.eNodeBs=[]
 
-      def Initialize_resources(self,net):
+      def initializeNetworkResources(self, net):
           cLibrary= contentLibrary()
           #nodes= net.hosts + net.stations
           for host in net.hosts:
-              if(host.custom_type == "sd_cloudHost"):
+              if(host.custom_type == Type.SD_CLOUD_HOST):
                   msg=[]
                   msg.append(host.IP())
                   Fun1=self.get_capacity(host,host.type)
@@ -40,7 +39,7 @@ class SDVanet_Controller( Controller ):
               else:
                   continue
           for switch in net.switches:
-              if(switch.custom_type == "sd_switch"):
+              if(switch.custom_type == Type.SD_SWITCH):
                   msg = []
                   msg.append("'[02:00:00:00:0k:00]'")
                   """cap = self.get_capacity(switch, switch.type)
@@ -60,7 +59,7 @@ class SDVanet_Controller( Controller ):
                   # msg.append(cLibrary[count])
                   msg.append(contents)
                   # new item
-                  self.sendMsg_toSwitch("AR", switch, msg, net)
+                  self.sendMsg_toSwitch(Operations.CONTENT_DELIVERY, switch, msg, net)
 
               else:
                   continue
@@ -81,11 +80,11 @@ class SDVanet_Controller( Controller ):
           count=0
           for accessPoint in net.accessPoints:
               #filter out accesspoints by custom_type
-              if(accessPoint.custom_type == "sd_rsu"):
+              if(accessPoint.custom_type == Type.SD_RSU):
                   self.RSUs.append(accessPoint)
-              elif(accessPoint.custom_type == "sd_eNodeB"):
+              elif(accessPoint.custom_type == Type.SD_E_NODEB):
                   self.eNodeBs.append(accessPoint)
-              elif(accessPoint.custom_type == "sd_switch"):
+              elif(accessPoint.custom_type == Type.SD_SWITCH):
                   continue; #main switch does not hold any MEC related function
               msg=[]
               msg.append(accessPoint.params['mac'])
@@ -109,7 +108,7 @@ class SDVanet_Controller( Controller ):
               #msg.append(cLibrary[count])
               msg.append(contents)
               #new item
-              self.send_msg_to_accesspoint("mec",accessPoint,msg,net)
+              self.send_msg_to_accesspoint(Operations.MEC,accessPoint,msg,net)
 
       def Handle_switch_packets(self,status,Used_space,HostID,net):
           " Get a message from the switch and handle it."
@@ -128,7 +127,7 @@ class SDVanet_Controller( Controller ):
               self.update_AccessPoint_FT(data,sta_IP,net)
           elif (operation == "mec_Update"):
               self.update_AccessPoint_Mec(data,mac_id,net)
-          elif (operation == "AR"):
+          elif (operation == Operations.CONTENT_DELIVERY):
               res=self.search_AR_MEC(data,mac_id,net)
               return res
 
@@ -136,21 +135,21 @@ class SDVanet_Controller( Controller ):
 
       def sendMsg_toSwitch(self,operation,node,FT,net):
           " Send a message to the switch to notify it with any change "
-          if(node.type == "switch"):
+          if(node.type == Type.SWITCH):
             node.Handle_controller_packets(operation,FT)
 
       def send_msg_to_accesspoint(self,operation,node,FT,net):
           "send a message to the access point to notify the changes "
-          if(node.type == 'ap'):
-              node.Handle_controller_FT_update(operation,FT)
-          elif(node.type == "vehicle"):
+          if(node.type == Type.ACCESSPOINT):
+              node.handleControllerUpdateRequest(operation, FT)
+          elif(node.type == Type.VEHICLE):
               #node is car
               ap=node.params['associatedTo'][0]
               #print ("node type is %s associated to %s type"%(node.type,ap.type))
-              ap.Handle_controller_FT_update(operation,FT)
+              ap.handleControllerUpdateRequest(operation, FT)
           else:
               ap= node.params['associatedTo'][0]
-              ap.Handle_controller_FT_update(operation,FT)
+              ap.handleControllerUpdateRequest(operation, FT)
               #node is station
 
       def update_Switch_FT(self, Used_space,HostID,net):
@@ -207,8 +206,8 @@ class SDVanet_Controller( Controller ):
                   continue
               else:
                   #search AP for requested AR content
-                  for AR_content in ap.AR_Library:
-                      for c in AR_content:
+                  for content in ap.cLibrary:
+                      for c in content:
                           for i in range(len(c)):
                               if(i == 0):
                                   #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],data))
@@ -238,9 +237,9 @@ class SDVanet_Controller( Controller ):
           if(not found):
               #print ("can not find the requested AR content within all accesspoints")
               for sw in net.switches:
-                  if(sw.custom_type == "sd_switch"):
-                      for AR_content in sw.AR_Library:
-                          for c in AR_content:
+                  if(sw.custom_type == Type.SD_SWITCH):
+                      for content in sw.cLibrary:
+                          for c in content:
                               for i in range(len(c)):
                                   if(i == 0):
                                       if (c[i] == data):
@@ -267,7 +266,7 @@ class SDVanet_Controller( Controller ):
       def update_AccessPoint_Mec(self,used_space,mac_id,net):
           #print ("controller->Update MEC[%s] storage with %s datasize",used_space)
           for ap in net.accessPoints:
-              if (ap.custom_type == "sd_switch"):
+              if (ap.custom_type == Type.SD_SWITCH):
                   continue
               if (ap.params['mac'] == mac_id):
                   ap.Used_space+=used_space
@@ -289,7 +288,7 @@ class SDVanet_Controller( Controller ):
           " Add a Dir to the Storage_Host."
           #TODO: check if node type (this metho were handling hosts only, and has been changed to stations)
           for MEC in net.accessPoints:
-              if (MEC.custom_type == "sd_switch"):
+              if (MEC.custom_type == Type.SD_SWITCH):
                   continue
               MEC.NO_of_RACKS+=1
               msg=[]
@@ -308,34 +307,34 @@ class SDVanet_Controller( Controller ):
           return net
 
       def get_capacity(self,node,node_type):
-          if(node_type == "host"):
+          if(node_type == Type.HOST):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "station"):
+          elif(node_type == Type.STATION):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "ap" ):
+          elif(node_type == Type.ACCESSPOINT):
               Cap= (node.NO_of_RACKS* node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "vehicle"):
+          elif(node_type == Type.VEHICLE):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
           return Cap
 
       def isFull(self,node,node_type): #Fun2
           "Check if the storage host is full or not!"
-          if (node_type == "host"):
+          if (node_type == Type.HOST):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:
                  return "No"
-          elif (node_type == "station"):
+          elif (node_type == Type.STATION):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:
                  return "No"
-          elif (node_type == "accessPoint"):
+          elif (node_type == Type.ACCESSPOINT):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:
                  return "No"
-          elif (node_type == "vehicle"):
+          elif (node_type == Type.VEHICLE):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:

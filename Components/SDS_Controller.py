@@ -7,12 +7,13 @@ from mininet.net import Mininet
 from mininet.util import custom
 
 import time
+from config import Operations,Type
 
 
 class SDStorage_Controller( Controller ):
       "Controller to run a SDStorage functions."
 
-      def __init__( self, name,custom_type="storage_controller", **kwargs ):
+      def __init__( self, name,custom_type=Type.SD_STORAGE_CONTROLLER, **kwargs ):
           Controller.__init__( self, name,**kwargs )
           self.custom_type=custom_type
 
@@ -96,7 +97,7 @@ class SDStorage_Controller( Controller ):
               msg.append(AR_Library[count])
               count+=1
               #new item
-              self.send_msg_to_accesspoint("mec",accessPoint,msg,net)
+              self.send_msg_to_accesspoint(Operations.MEC,accessPoint,msg,net)
 
       def Handle_switch_packets(self,status,Used_space,HostID,net):
           " Get a message from the switch and handle it."
@@ -127,7 +128,7 @@ class SDStorage_Controller( Controller ):
           Topo.switches[0].Handle_controller_packets(status,msg)
       def send_msg_to_accesspoint(self,operation,node,FT,net):
           "send a message to the access point to notify the changes "
-          if(node.type == 'accessPoint'):
+          if(node.type == Type.ACCESSPOINT):
               node.Handle_controller_FT_update(operation,FT)
           else:
               #node is station
@@ -252,27 +253,27 @@ class SDStorage_Controller( Controller ):
           return net
 
       def get_capacity(self,node,node_type):
-          if(node_type == "host"):
+          if(node_type == Type.HOST):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "station"):
+          elif(node_type == Type.STATION):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
-          elif(node_type == "accessPoint"):
+          elif(node_type == Type.ACCESSPOINT):
               Cap= (node.NO_of_Dir*node.NO_of_files*node.file_size)
           return Cap
 
       def isFull(self,node,node_type): #Fun2
           "Check if the storage host is full or not!"
-          if (node_type == "host"):
+          if (node_type == Type.HOST):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:
                  return "No"
-          elif (node_type == "station"):
+          elif (node_type == Type.STATION):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:
                  return "No"
-          elif (node_type == "accessPoint"):
+          elif (node_type == Type.ACCESSPOINT):
               if self.get_capacity(node,node_type)== node.Used_space:
                  return "Yes"
               else:

@@ -19,6 +19,7 @@ from Components.SDS_VANET_Controller import SDVanet_Controller
 from Components.SDS_Switch import SDStor_Switch
 from Components.SDS_Car import SD_Car
 from Components.SDS_Station import SDStorage_Station
+from Components.config import Modes
 
 RSU = SD_RSU
 VANET_Controller = SDVanet_Controller
@@ -34,7 +35,7 @@ def topology():
     car = []
     stas = []
     mec = []
-    channel = [1,6,11]
+    channel = ['1','6','11']
     NUM_OF_MECS = 4
     for x in range(0, 5):
         car.append(x)
@@ -61,7 +62,7 @@ def topology():
         start2 = time.time()
         datasize = int(datasize)
         print ("car %s want to store %s bytes" % (0, datasize))
-        car[0].store(datasize, "mec", net)
+        car[0].store(datasize,Modes.MEC , net)
         end2 = time.time()
         with open('Storage.txt', 'a') as f:
             f.write('%.12f \n' % (end2-start2))
@@ -70,7 +71,7 @@ def topology():
     print "*** Configuring wifi nodes"
     net.configureWifiNodes()
 
-    net.meshRouting('custom') 
+    #net.meshRouting('custom')
 
     print "*** Associating and Creating links"
     for m in range(0, NUM_OF_MECS):
@@ -93,14 +94,14 @@ def topology():
         os.system('ifconfig %s 10.0.0.%s' % (sw, i))
         i+=1
 
-    """uncomment to plot graph"""
-    net.plotGraph(max_x=700, max_y=700)
-
     """Number of Roads"""
     net.roads(10)
 
+    """uncomment to plot graph"""
+    net.plotGraph(max_x=700, max_y=700)
+
     """Start Mobility"""
-    net.startMobility(time=0)
+    net.startMobility(time=1)
     i = 1
     j = 2
     k = 1
@@ -130,15 +131,14 @@ def topology():
             i+=1
             j+=2
 
-    c1.Initialize_resources(net)
-    storage_type="mec"
+    c1.initializeNetworkResources(net)
     print ("Draw 10 roads and place the 4 MEC nodes along them?")
     print ("\n\n\n***************************START*******************************")
     datasize = raw_input("What is the amount of storage you want (in bytes)")
     SDStorage(datasize)
     print ("\n\n\n***************************END*******************************")
     print ("(MEC) info Table after the test")
-    net.accessPoints[0].print_mec_info("mec",net)
+    net.accessPoints[0].listMecContents(Modes.MEC, net)
     print "*** Running CLI"
     CLI( net )
 

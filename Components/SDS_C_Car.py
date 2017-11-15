@@ -3,12 +3,13 @@
 import os
 from mininet.node import Car
 import time
+from config import Modes,Type
 
 
 class SD_C_Car(Car):
     "Storage Station is a host that operates with a wireless interface card"
 
-    def __init__(self, name, custom_type="sd_car", NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
+    def __init__(self, name, custom_type=Type.SD_C_CAR, NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
         Car.__init__(self, name, **pars)
         self.NO_of_files = NO_of_files
         self.NO_of_Dir = NO_of_Dir
@@ -18,28 +19,25 @@ class SD_C_Car(Car):
 
         # TODO: Caching contents should be dynamic
         """Cached AR Content"""
-        self.AR_Library = []
+        self.cLibrary = []
         # [content_identifier,content_name,content_size]
-        AR_content = [1, "CityAR.fbx", 5000]
-        self.AR_Library.append(AR_content)
-        AR_content = [2, "CarAR.obj", 9000]
-        self.AR_Library.append(AR_content)
-        AR_content = [3, "StreetAR.fbx", 3000]
-        self.AR_Library.append(AR_content)
-        AR_content = [4, "HeritageAR.jpg", 850]
-        self.AR_Library.append(AR_content)
-        AR_content = [5, "MallAR.fbx", 5000]
-        self.AR_Library.append(AR_content)
-        AR_content = [6, "statueAR.obj", 9000]
-        self.AR_Library.append(AR_content)
-        AR_content = [7, "StAR.fbx", 3000]
-        self.AR_Library.append(AR_content)
-        AR_content = [8, "HallAR.jpg", 850]
-        self.AR_Library.append(AR_content)
-        """AR_content = [9, "shopAR.fbx", 3500]
-        self.AR_Library.append(AR_content)
-        AR_content = [10, "DinasorAR.obj", 8650]
-        self.AR_Library.append(AR_content)"""
+        content = [1, "City.fbx", 5000]
+        self.cLibrary.append(content)
+        content = [2, "Car.obj", 9000]
+        self.cLibrary.append(content)
+        content = [3, "Street.fbx", 3000]
+        self.cLibrary.append(content)
+        content = [4, "Heritage.jpg", 850]
+        self.cLibrary.append(content)
+        content = [5, "Mall.fbx", 5000]
+        self.cLibrary.append(content)
+        content = [6, "statue.obj", 9000]
+        self.cLibrary.append(content)
+        content = [7, "Sta.fbx", 3000]
+        self.cLibrary.append(content)
+        content = [8, "Hall.jpg", 850]
+        self.cLibrary.append(content)
+
 
     def RequestContent(self, net, op=1):
         print ("\nAR content \t|\t Time \t\t|   Status")
@@ -49,7 +47,7 @@ class SD_C_Car(Car):
             if (self.foundIncache(i)):
                 result = "Found/cache"
             else:
-                result = self.escalateRequest(i, "mec", net, op)
+                result = self.escalateRequest(i, Modes.MEC, net, op)
                 if (result):
                     result = "Found"
                 else:
@@ -75,7 +73,7 @@ class SD_C_Car(Car):
         return (res2)
 
     def escalateRequest(self, content_identifier, mode, net, op):
-        if (mode == "mec"):
+        if (mode == Modes.MEC):
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]
             success = False
@@ -84,7 +82,7 @@ class SD_C_Car(Car):
             for accessPoint in net.accessPoints:
                 if (op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.accessPoints[index].Handle_Content_Request(
+                        result = net.accessPoints[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -92,7 +90,7 @@ class SD_C_Car(Car):
                 else:  # v2v
                     if ("00:00:00:11:00:05" in accessPoint.params[
                             'mac']):  # TODO: fetch associated MEC dynamically when bgscan-enabled
-                        result = net.accessPoints[index].Handle_Content_Request(
+                        result = net.accessPoints[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -101,14 +99,14 @@ class SD_C_Car(Car):
             return result
 
         else:
-            """SD Search"""
+            """other modes"""
 
     def foundIncache(self, content_identifier):
         found = False
-        for AR_content in self.AR_Library:
-            #print ("the content is: %s " % AR_content[1])
-            if (AR_content[0] == content_identifier):
-                sleep_time = (AR_content[2] / 1000) * 0.0000018
+        for content in self.cLibrary:
+            #print ("the content is: %s " % content[1])
+            if (content[0] == content_identifier):
+                sleep_time = (content[2] / 1000) * 0.0000018
                 time.sleep(sleep_time)
                 found = True
             else:

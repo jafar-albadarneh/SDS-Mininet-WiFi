@@ -1,12 +1,13 @@
 #!/usr/bin/pyhton
 
 from mininet.node import Station
+from config import Modes, Type
 
 
 class SDStorage_Station(Station):
     "Storage Station is a host that operates with a wireless interface card"
 
-    def __init__(self, name, custom_type="sd_station", NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
+    def __init__(self, name, custom_type=Type.SD_STATION, NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
         Station.__init__(self, name, **pars)
         self.NO_of_files = NO_of_files
         self.NO_of_Dir = NO_of_Dir
@@ -17,7 +18,7 @@ class SDStorage_Station(Station):
     # print ("Custom station has been initialized")
 
     def requestContents(self, content_identifier, mode, net):
-        if (mode == "mec"):
+        if (mode == Modes.MEC):
             """MEC SEARCH"""
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]
@@ -26,7 +27,7 @@ class SDStorage_Station(Station):
             index = 0
             for accessPoint in net.accessPoints:
                 if (accessPoint.params['mac'] == ap.params['mac']):
-                    result = net.accessPoints[index].Handle_Content_Request(
+                    result = net.accessPoints[index].handleContentRequest(
                         content_identifier, net)
                     # print ("result in station: %s"%result)
                     break

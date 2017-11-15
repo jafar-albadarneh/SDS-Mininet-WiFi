@@ -3,12 +3,13 @@
 import os
 from mininet.node import Car
 import time
+from config import Modes,Type
 
 
 class SD_Car(Car):
     "Storage Station is a host that operates with a wireless interface card"
 
-    def __init__(self, name, custom_type="sd_car", NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
+    def __init__(self, name, custom_type=Type.SD_CAR, NO_of_Dir=0, NO_of_files=0, file_size=0, Used_space=0, **pars):
         Car.__init__(self, name, **pars)
         self.NO_of_files = NO_of_files
         self.NO_of_Dir = NO_of_Dir
@@ -17,11 +18,11 @@ class SD_Car(Car):
         self.custom_type = custom_type
 
     def RequestContent(self, net, op=1):
-        print ("\nAR content \t|\t Time \t\t|   Status")
+        print ("\tcontent \t|\t Time \t\t|   Status")
         print ("-----------\t|\t ----------\t| ----------")
         for i in range(1, 11):
             start3 = time.time()
-            result = self.escalateRequest(i, "mec", net, op)
+            result = self.escalateRequest(i, Modes.MEC, net, op)
             if (result):
                 result = "Found"
             else:
@@ -47,7 +48,7 @@ class SD_Car(Car):
         return (res2)
 
     def escalateRequest(self, content_identifier, mode, net, op):
-        if (mode == "mec"):
+        if (mode == Modes.MEC):
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]  # TODO:activate this for v2i experiment
             success = False
@@ -56,7 +57,7 @@ class SD_Car(Car):
             for accessPoint in net.accessPoints:
                 if(op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.accessPoints[index].Handle_Content_Request(
+                        result = net.accessPoints[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -64,7 +65,7 @@ class SD_Car(Car):
                 else:  # v2v
                     # TODO: fetch associated MEC with bgscan-enabled
                     if ("00:00:00:11:00:05" in accessPoint.params['mac']):
-                        result = net.accessPoints[index].Handle_Content_Request(
+                        result = net.accessPoints[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -75,7 +76,7 @@ class SD_Car(Car):
         else:
             """SD Search"""
     def store(self, datasize, mode, net):
-        if (mode == "mec"):
+        if (mode == Modes.MEC):
             """MEC OPERATIONS"""
             # get the accessPoint the station is attached to
             for wlan in range(0, len(self.params['wlan'])):
@@ -85,7 +86,7 @@ class SD_Car(Car):
             index = 0
             # search if the accesspoint
             for accessPoint in net.accessPoints:
-                if (accessPoint.custom_type == "sd_switch"):
+                if (accessPoint.custom_type == Type.SD_SWITCH):
                     continue
                 if (accessPoint.params['mac'] == ap.params['mac']):
                     net.accessPoints[index].store_data(datasize, net)

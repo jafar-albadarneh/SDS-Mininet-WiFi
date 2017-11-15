@@ -145,7 +145,7 @@ def topology():
             i += 1
             j += 2
 
-    c1.Initialize_resources(net)
+    c1.initializeNetworkResources(net)
 
     if(v2v):
         raw_input("Press Enter to continue (wait 30sec after t=28)...")
