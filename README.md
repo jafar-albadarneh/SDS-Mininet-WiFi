@@ -11,7 +11,7 @@ This repo holds the outcome of the collaborative work on supporting software def
 The list of supported systems are as follows: 
 
 1. VANET-based Software Defined Content Delivery Systems for cooperative mobile Edge Computing
-2. Software Defined Storage for Cooperative Mobile Edge Computing Systems. 
+2. [Software Defined Storage for Cooperative Mobile Edge Computing Systems.](https://www.researchgate.net/publication/317421285_Software_Defined_Storage_for_cooperative_Mobile_Edge_Computing_systems) 
 
 Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/7939160/)
 
