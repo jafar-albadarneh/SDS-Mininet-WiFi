@@ -4,6 +4,7 @@ import os
 from mininet.node import Car
 import time
 from config import Modes,Type
+from latencyModel import latencyModel
 
 
 class SD_C_Car(Car):
@@ -106,12 +107,12 @@ class SD_C_Car(Car):
         for content in self.cLibrary:
             #print ("the content is: %s " % content[1])
             if (content[0] == content_identifier):
-                sleep_time = (content[2] / 1000) * 0.0000018
+                sleep_time = latencyModel.fileTransferLatency(content[2])
                 time.sleep(sleep_time)
                 found = True
             else:
                 # cache search peneality in the same car
-                time.sleep(0.0001)
+                time.sleep(latencyModel.searchPenality())
                 pass
 
             if (found):

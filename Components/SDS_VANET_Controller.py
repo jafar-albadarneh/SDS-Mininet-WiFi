@@ -6,6 +6,7 @@ from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.util import custom
 from config import Modes,Operations, Type
+from latencyModel import latencyModel
 import time
 
 from Components.contentLibrary import contentLibrary
@@ -208,31 +209,26 @@ class SDVanet_Controller( Controller ):
                   #search AP for requested AR content
                   for content in ap.cLibrary:
                       for c in content:
-                              #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],data))
                               if(c[0] == data):
-                                  #print "AR content found"
+                                  #print "content found"
                                   found = True
-                                  #print("AR content found in AP[%s]"%(ap.params['mac']))
-                                  #sleep thread to memic search time in another MEC
-
-                                  #Consider file size when applying latency
-                                  sleep_time=(c[0+2]/1000)*0.0000018
+                                  sleep_time= latencyModel.fileTransferLatency(c[0+2])
                                   #Consider num of hubs when applying latency
-                                  sleep_time+=0.03
+                                  sleep_time+=latencyModel.nextHopLatency()
                                   time.sleep(sleep_time)
                                   #print ("result in controller: %s"%found)
                                   return found
                               else:
                                   # search peneality in the same MEC node
-                                  time.sleep(0.0001)
+                                  time.sleep(latencyModel.searchPenality())
 
 
-                  time.sleep(0.03)
+                  time.sleep(latencyModel.nextHopLatency())
                   #print ("counter: %s"%counter)
                   counter = counter +1
 
           if(not found):
-              #print ("can not find the requested AR content within all accesspoints")
+              #print ("can not find the requested content within all accesspoints")
               for sw in net.switches:
                   if(sw.custom_type == Type.SD_SWITCH):
                       for content in sw.cLibrary:
@@ -241,14 +237,15 @@ class SDVanet_Controller( Controller ):
                                   found=True
                                   #print("AR content found in cloud")
                                   # Consider file size when applying latency
-                                  #sleep_time=0
-                                  sleep_time = (c[0 + 2] / 1000) * 0.0000018
-                                  # Consider num of hubs when applying latency
-                                  sleep_time += 0.06
+                                  sleep_time= latencyModel.fileTransferLatency(c[0+2])
+                                  #Consider num of hubs when applying latency
+                                  sleep_time+=latencyModel.nextHopLatency()
                                   time.sleep(sleep_time)
+                                  #print ("result in controller: %s"%found)
                                   return found
                               else:
-                                  time.sleep(0.0001)
+                                  # search peneality in the same MEC node
+                                  time.sleep(latencyModel.searchPenality())
 
                   else:
                       #not switch, might be (AP,MEC,eNodeB)
