@@ -29,17 +29,17 @@ class SDStorage_Controller( Controller ):
           basestation_num_dir=50
           basestation_size=25
           basestation_used=0
-          """AR STUFF"""
-          AR_Library=[]
+          """Content"""
+          cLibrary=[]
           #[content_identifier,content_name,content_size]
-          AR_content=[1,"CityAR.fbx",5000]
-          AR_Library.append(AR_content)
-          AR_content=[2,"CarAR.obj",2000]
-          AR_Library.append(AR_content)
-          AR_content=[3,"StreetAR.fbx",1000]
-          AR_Library.append(AR_content)
-          AR_content=[4,"HeritageAR.jpg",850]
-          AR_Library.append(AR_content)
+          content=[1,"City.fbx",5000]
+          cLibrary.append(content)
+          content=[2,"Car.obj",2000]
+          cLibrary.append(content)
+          content=[3,"Street.fbx",1000]
+          cLibrary.append(content)
+          content=[4,"Heritage.jpg",850]
+          cLibrary.append(content)
           #nodes= net.hosts + net.stations
           """for host in net.hosts:
               host.NO_of_Dir=host_num_dir
@@ -94,7 +94,7 @@ class SDStorage_Controller( Controller ):
               msg.append(av_space)
               msg.append(accessPoint.type)
               #Localizing AR contnet for each accesspoint
-              msg.append(AR_Library[count])
+              msg.append(cLibrary[count])
               count+=1
               #new item
               self.send_msg_to_accesspoint(Operations.MEC,accessPoint,msg,net)
@@ -116,7 +116,7 @@ class SDStorage_Controller( Controller ):
               self.update_AccessPoint_FT(data,sta_IP,net)
           elif (operation == "mec_Update"):
               self.update_AccessPoint_Mec(data,mac_id,net)
-          elif (operation == "AR"):
+          elif (operation == Operations.CONTENT_DELIVERY):
               res=self.search_AR_MEC(data,mac_id,net)
               return res
 
@@ -185,28 +185,23 @@ class SDStorage_Controller( Controller ):
                   continue
               else:
                   #search AP for requested AR content
-                  for AR_content in ap.AR_Library:
-                      for i in range(len(AR_content)):
-                          if(i == 0):
-                              #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(AR_content[0],AR_content[1],content_identifier))
-                              if(AR_content[i] == data):
-                                  #print "AR content found"
-                                  found = True
-                                  #print("AR content found in AP[%s]"%(ap.params['mac']))
-                                  #sleep thread to memic search time in another MEC
+                  for content in ap.cLibrary:
+                      #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(content[0],content[1],content_identifier))
+                      if(content[0] == data):
+                          #print "AR content found"
+                          found = True
+                          #print("AR content found in AP[%s]"%(ap.params['mac']))
+                          #sleep thread to memic search time in another MEC
+                          #Consider file size when applying latency
+                          sleep_time=(content[0+2]/1000)*0.0000018
+                          #Consider num of hubs when applying latency
+                          sleep_time+=0.03
+                          time.sleep(sleep_time)
+                          #print ("result in controller: %s"%found)
+                          return found
+                      else:
+                          time.sleep(0.03)
 
-                                  #Consider file size when applying latency
-                                  sleep_time=(AR_content[i+2]/1000)*0.0000018
-                                  #Consider num of hubs when applying latency
-                                  sleep_time+=0.03
-                                  time.sleep(sleep_time)
-                                  #print ("result in controller: %s"%found)
-                                  return found
-                              else:
-                                  time.sleep(0.03)
-
-                          else:
-                              break
           if(not found):
               time.sleep(0.1)
               #print ("can not find the requested AR content within all accesspoints")

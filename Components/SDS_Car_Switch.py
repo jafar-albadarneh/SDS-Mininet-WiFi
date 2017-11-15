@@ -3,7 +3,7 @@
 import sys
 from mininet.node import OVSKernelSwitch
 from operator import itemgetter
-from config import Type
+from config import Type,Operations,Modes
 
 
 # guppy: actual memory consumption
@@ -31,7 +31,7 @@ class SD_Car_Switch(OVSKernelSwitch):
     def Handle_controller_packets(self, operation, message):
         packetstatus = operation
         SDSObject = message
-        if (packetstatus == "AR"):
+        if (packetstatus == Operations.CONTENT_DELIVERY):
             self.update_AR(SDSObject)
 
     def sendMsg_toCon(self, status, Used_space, HostID, net):
@@ -45,7 +45,7 @@ class SD_Car_Switch(OVSKernelSwitch):
                 "Update", Used_space, HostID, net)
 
     def print_switch_info(self, mode, net):
-        if (mode == "AR"):
+        if (mode == Modes.CONTENT_DELIVERY):
             print (
                 "[MAC Address]\t{AR Library} \n ***************************")
             for sw in net.switches:

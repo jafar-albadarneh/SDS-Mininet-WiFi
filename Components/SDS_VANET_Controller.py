@@ -208,28 +208,25 @@ class SDVanet_Controller( Controller ):
                   #search AP for requested AR content
                   for content in ap.cLibrary:
                       for c in content:
-                          for i in range(len(c)):
-                              if(i == 0):
-                                  #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],data))
-                                  if(c[i] == data):
-                                      #print "AR content found"
-                                      found = True
-                                      #print("AR content found in AP[%s]"%(ap.params['mac']))
-                                      #sleep thread to memic search time in another MEC
+                              #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],data))
+                              if(c[0] == data):
+                                  #print "AR content found"
+                                  found = True
+                                  #print("AR content found in AP[%s]"%(ap.params['mac']))
+                                  #sleep thread to memic search time in another MEC
 
-                                      #Consider file size when applying latency
-                                      sleep_time=(c[i+2]/1000)*0.0000018
-                                      #Consider num of hubs when applying latency
-                                      sleep_time+=0.03
-                                      time.sleep(sleep_time)
-                                      #print ("result in controller: %s"%found)
-                                      return found
-                                  else:
-                                      # search peneality in the same MEC node
-                                      time.sleep(0.0001)
-
+                                  #Consider file size when applying latency
+                                  sleep_time=(c[0+2]/1000)*0.0000018
+                                  #Consider num of hubs when applying latency
+                                  sleep_time+=0.03
+                                  time.sleep(sleep_time)
+                                  #print ("result in controller: %s"%found)
+                                  return found
                               else:
-                                  break
+                                  # search peneality in the same MEC node
+                                  time.sleep(0.0001)
+
+
                   time.sleep(0.03)
                   #print ("counter: %s"%counter)
                   counter = counter +1
@@ -240,20 +237,18 @@ class SDVanet_Controller( Controller ):
                   if(sw.custom_type == Type.SD_SWITCH):
                       for content in sw.cLibrary:
                           for c in content:
-                              for i in range(len(c)):
-                                  if(i == 0):
-                                      if (c[i] == data):
-                                          found=True
-                                          #print("AR content found in cloud")
-                                          # Consider file size when applying latency
-                                          #sleep_time=0
-                                          sleep_time = (c[i + 2] / 1000) * 0.0000018
-                                          # Consider num of hubs when applying latency
-                                          sleep_time += 0.06
-                                          time.sleep(sleep_time)
-                                          return found
-                                      else:
-                                          time.sleep(0.0001)
+                              if (c[0] == data):
+                                  found=True
+                                  #print("AR content found in cloud")
+                                  # Consider file size when applying latency
+                                  #sleep_time=0
+                                  sleep_time = (c[0 + 2] / 1000) * 0.0000018
+                                  # Consider num of hubs when applying latency
+                                  sleep_time += 0.06
+                                  time.sleep(sleep_time)
+                                  return found
+                              else:
+                                  time.sleep(0.0001)
 
                   else:
                       #not switch, might be (AP,MEC,eNodeB)

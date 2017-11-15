@@ -62,21 +62,16 @@ class SD_eNodeB (UserAP):
         found = False
         for AR_content in self.cLibrary:
             for c in AR_content:
-                for i in range(len(c)):
-                    if(i == 0):
-                        #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],content_identifier))
-                        if(c[i] == contentIdentifier):
-                            # print "AR content found locally"
-                            # Consider file size when applying latency
-                            sleep_time = (c[i + 2] / 1000) * 0.0000018
-                            time.sleep(sleep_time)
-                            found = True
-                        else:
-                            # search peneality in the same MEC node
-                            time.sleep(0.0001)
-
-                    else:
-                        break
+                #print ("AR identifier inside AP is %s holding %s and passed identifier is %s "%(c[0],c[1],content_identifier))
+                if(c[0] == contentIdentifier):
+                    # print "AR content found locally"
+                    # Consider file size when applying latency
+                    sleep_time = (c[0 + 2] / 1000) * 0.0000018
+                    time.sleep(sleep_time)
+                    found = True
+                else:
+                    # search peneality in the same MEC node
+                    time.sleep(0.0001)
                 if(found):
                     break
         if(not found):
