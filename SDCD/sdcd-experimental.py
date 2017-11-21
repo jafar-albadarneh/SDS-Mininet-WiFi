@@ -194,6 +194,12 @@ def topology():
         print "********  V2I experiment **********"
         print "***********************************"
         raw_input("PressEnter after T=28 ...")
+
+        # Assigning IPs for Access points wlan interfaces
+        IPs = ['90','91','92','93','94','95','96']
+        for i in range(0,6):
+            net.accessPoints[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
+
         print "type>> py car4.RequestContent(net)"
 
     print "*** Running CLI"
