@@ -63,7 +63,7 @@ def topology():
         stas.append(x)
     for x in range(0, 10):
         cars[x] = net.addCar('car%s' % (x), wlans=1,
-                             ip='10.0.0.%s/8' % (x + 1), cls=car_type)
+                             ip='10.0.0.%s/8' % (x + 1), encrypt='wpa2', cls=car_type)
 
     e1 = net.addAccessPoint('e1', ssid='vanet-ssid1', mac='00:00:00:11:00:01', mode='g', channel='1',
                             passwd='123456789a', encrypt='wpa2', position='3332.62,3253.92,0', cls=eNodeB, inNamespace=True)
