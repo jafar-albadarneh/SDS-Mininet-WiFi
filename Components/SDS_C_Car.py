@@ -67,11 +67,11 @@ class SD_C_Car(Car):
 
             print (" %s \t \t \t %.12f \t%s" % (i, end3 - start3, result))
 
-    def getAssociatedAp(self):
-        result = self.cmd('iw dev car2-wlan0 scan')
-        res2 = result.split()[1]
-        res2 = res2.split('(')[0]
-        return (res2)
+    def getAssociatedAP(self):
+        result = self.cmd('iw dev %s-wlan0 link'%self.name)
+        if(result != 'Not Connected'):
+            mac_address = result.split()[2]
+        return mac_address
 
     def escalateRequest(self, content_identifier, mode, net, op):
         if (mode == Modes.MEC):
@@ -88,8 +88,8 @@ class SD_C_Car(Car):
                         break
                     else:
                         index += 1
-                else:  # v2v
-                    if ("00:00:00:11:00:05" in accessPoint.params[
+                else:  # v2v (bgscan enabled)
+                    if (self.getAssociatedAP() in accessPoint.params[
                             'mac']):  # TODO: fetch associated MEC dynamically when bgscan-enabled
                         result = net.accessPoints[index].handleContentRequest(
                             content_identifier, net)
