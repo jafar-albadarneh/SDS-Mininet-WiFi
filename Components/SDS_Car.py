@@ -45,15 +45,25 @@ class SD_Car(Car):
         result = self.cmd('iw dev %s-wlan0 link'%self.name)
         if(result != 'Not Connected'):
             mac_address = result.split()[2]
-        return mac_address
+            return mac_address
+        else:
+            raise ValueError("Vehicle is not connected")
+
+
+    def getExternalIP(self):
+        result = self.cmd('ifconfig %s | grep "inet addr"'%self.params['wlan'][0])
+        ip_address = result.split()[1].split(':')[1]
+        return ip_address
+
+    def decodeRXResults(self):
+        receiverLog = '%s-receiver.log'%self.name
+        self.cmdPrint("ITGDec %s"%receiverLog)
 
 
     def escalateRequest(self, content_identifier, mode, net, op):
         if (mode == Modes.MEC):
             """getting accessPoint the station is associated to"""
-            ap = self.params['associatedTo'][0]  # TODO:activate this for v2i experiment
-            success = False
-
+            ap = self.params['associatedTo'][0]
             index = 0
             for accessPoint in net.accessPoints:
                 if(op == 1):

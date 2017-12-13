@@ -83,3 +83,28 @@ class SD_eNodeB (UserAP):
             return res
         #print ("result in accesspoint(Local MEC): %s"%found)
         return found
+
+    def sendTrafficToCar(self,car,numberOfKiloBytes = 1024):
+        carIP = car.getExternalIP()
+        interface = car.params['wlan'][0]
+        """ activate ITG-Recieve Listener inside car """
+        car.cmdPrint("ITGRecv &")
+
+        """ send traffic from accessPoint """
+        protocol = 'UDP'
+        generationDuration = 150 # -t
+        numOfkilobytes = numberOfKiloBytes # -r
+        numberofPackets = None # -z
+        # when -z,-t,-k selected, the most constructive will be applied
+        packetSize = 10 # -c
+        senderLogFile = '%s-sender.log'%self.name
+        receiverLogFile = '%s-receiver.log'%car.name
+
+        self.cmdPrint("sudo ITGSend "
+                 "-T %s " # protocol
+                 "-a %s " # destination IP
+                 "-k %s " # number of kilobytes
+                 "-t %s " # generation duration 
+                 "-l %s " # sender log
+                 "-x %s" # receiver log
+                 %(protocol,carIP,numOfkilobytes,generationDuration,senderLogFile,receiverLogFile))

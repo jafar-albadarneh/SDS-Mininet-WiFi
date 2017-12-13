@@ -149,6 +149,7 @@ def topology():
     IPs = ['90','91','92','93','94','95','96']
     for i in range(0,6):
         net.accessPoints[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
+        net.accessPoints[i].extIP = '192.168.0.%s'%(IPs[i])
 
     c1.initializeNetworkResources(net)
 
