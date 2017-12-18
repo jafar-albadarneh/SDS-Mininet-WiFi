@@ -65,18 +65,18 @@ def topology():
         cars[x] = net.addCar('car%s' % (x), wlans=1,
                              ip='10.0.0.%s/8' % (x + 1), encrypt='wpa2', cls=car_type)
 
-    e1 = net.addAccessPoint('e1', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:01', mode='g', channel='1',
-                            passwd='123456789a', encrypt='wpa2', position='3332.62,3253.92,0', cls=eNodeB)
-    e2 = net.addAccessPoint('e2', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:02', mode='g', channel='1',
-                            passwd='123456789a', encrypt='wpa2', position='3279.02,3736.27,0', cls=eNodeB)
-    e3 = net.addAccessPoint('e3', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:03', mode='g', channel='11',
-                            passwd='123456789a', encrypt='wpa2', position='2806.42,3395.22,0', cls=eNodeB)
-    e4 = net.addAccessPoint('e4', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:04', mode='g', channel='6',
-                            passwd='123456789a', encrypt='wpa2', position='2320.82,3565.75,0', cls=eNodeB)
-    e5 = net.addAccessPoint('e5', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:05', mode='g', channel='6',
-                            passwd='123456789a', encrypt='wpa2', position='2887.62,2935.61,0', cls=eNodeB)
-    e6 = net.addAccessPoint('e6', wlans=2, ssid='vanet-ssid', mac='00:00:00:11:00:06', mode='g', channel='11',
-                            passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB)
+    e1 = net.addAccessPoint('e1', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:01', mode='g', channel='1',
+                            passwd='123456789a', encrypt='wpa2', position='3332.62,3253.92,0', cls=eNodeB, inNamespace=True)
+    e2 = net.addAccessPoint('e2', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:02', mode='g', channel='1',
+                            passwd='123456789a', encrypt='wpa2', position='3279.02,3736.27,0', cls=eNodeB, inNamespace=True)
+    e3 = net.addAccessPoint('e3', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:03', mode='g', channel='11',
+                            passwd='123456789a', encrypt='wpa2', position='2806.42,3395.22,0', cls=eNodeB, inNamespace=True)
+    e4 = net.addAccessPoint('e4', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:04', mode='g', channel='6',
+                            passwd='123456789a', encrypt='wpa2', position='2320.82,3565.75,0', cls=eNodeB, inNamespace=True)
+    e5 = net.addAccessPoint('e5', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:05', mode='g', channel='6',
+                            passwd='123456789a', encrypt='wpa2', position='2887.62,2935.61,0', cls=eNodeB, inNamespace=True)
+    e6 = net.addAccessPoint('e6', wlans=2, ssid='vanet-ssid,', mac='00:00:00:11:00:06', mode='g', channel='11',
+                            passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB, inNamespace=True)
 
     client = net.addHost('cloud', cls=Cloud_host)
     switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch)
@@ -93,18 +93,18 @@ def topology():
 
     net.addLink(switch, e1)
     net.addLink(client, switch)
-    net.addLink(e1, e2)
+    """net.addLink(e1, e2)
     net.addLink(e2, e3)
     net.addLink(e3, e4)
     net.addLink(e4, e5)
-    net.addLink(e5, e6)
+    net.addLink(e5, e6)"""
 
-    """net.addMesh(e1, intf = 'e1-wlan1', ssid='mesh-ssid')
-    net.addMesh(e2, intf = 'e2-wlan1', ssid='mesh-ssid')
-    net.addMesh(e3, intf = 'e3-wlan1', ssid='mesh-ssid')
-    net.addMesh(e4, intf = 'e4-wlan1', ssid='mesh-ssid')
-    net.addMesh(e5, intf = 'e5-wlan1', ssid='mesh-ssid')
-    net.addMesh(e6, intf = 'e6-wlan1', ssid='mesh-ssid')"""
+    net.addMesh(e1, intf = 'e1-wlan2', ssid='mesh-ssid')
+    net.addMesh(e2, intf = 'e2-wlan2', ssid='mesh-ssid')
+    net.addMesh(e3, intf = 'e3-wlan2', ssid='mesh-ssid')
+    net.addMesh(e4, intf = 'e4-wlan2', ssid='mesh-ssid')
+    net.addMesh(e5, intf = 'e5-wlan2', ssid='mesh-ssid')
+    net.addMesh(e6, intf = 'e6-wlan2', ssid='mesh-ssid')
 
     "Available Options: sumo, sumo-gui"
     net.useExternalProgram('sumo-gui', config_file='map.sumocfg')
@@ -156,6 +156,7 @@ def topology():
     IPs = ['90','91','92','93','94','95','96']
     for i in range(0,6):
         net.accessPoints[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
+        net.accessPoints[i].cmd('ifconfig e%s-mp2 192.168.2.%s'%(i+1,i+1))
         net.accessPoints[i].extIP = '192.168.0.%s'%(IPs[i])
 
     c1.initializeNetworkResources(net)
@@ -218,5 +219,5 @@ def topology():
 
 
 if __name__ == '__main__':
-    setLogLevel('info')
+    setLogLevel('debug')
     topology()
