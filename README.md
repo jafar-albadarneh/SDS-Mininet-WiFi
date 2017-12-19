@@ -31,6 +31,8 @@ Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/79391
     you'll need: 
     - Mininet-wifi (latest version) can be cloned at: [Mininet-WiFi](https://github.com/intrig-unicamp/mininet-wifi)
     - SUMO Urban simulator version >= 0.28.0
+    - Distributed Internet Traffic Generator (D-ITG) (latest version) can be found at: [D-ITG](http://traffic.comics.unina.it/software/ITG/download.php)
+    - octave (latest version), can be found at: [Octave](http://www.octave.org/)
     - ~~any future dependencies will be added here~~
 * How to run tests  
 
