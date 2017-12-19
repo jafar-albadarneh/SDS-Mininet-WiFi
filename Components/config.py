@@ -32,3 +32,14 @@ class Operations():
     """ OPERATION TYPES"""
     MEC = 1
     CONTENT_DELIVERY = 2
+
+class ITG():
+    """ D-ITG traffic configurations """
+    protocol = 'UDP' # -T
+    generationDuration = 150 # -t
+    numOfKilobytes = 1024 # -r
+    numberofPackets = None # -z
+    # when -z,-t,-k selected, the most constructive will be applied
+    packetSize = 10 # -c
+    senderLogFile = 'sender.log'
+    receiverLogFile = 'receiver.log'

@@ -91,7 +91,7 @@ class SD_eNodeB (UserAP):
         car.cmdPrint("ITGRecv &")
 
         """ send traffic from accessPoint """
-        protocol = 'UDP'
+        protocol = 'UDP' # -T
         generationDuration = 150 # -t
         numOfkilobytes = numberOfKiloBytes # -r
         numberofPackets = None # -z
