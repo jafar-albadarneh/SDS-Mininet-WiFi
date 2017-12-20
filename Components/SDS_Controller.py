@@ -77,7 +77,7 @@ class SDStorage_Controller( Controller ):
               #send message to access point
               self.send_msg_to_accesspoint("Add",station,msg,net)
           count=0
-          for accessPoint in net.accessPoints:
+          for accessPoint in net.aps:
               accessPoint.NO_of_Dir=basestation_num_dir
               accessPoint.NO_of_files=basestation_num_files
               accessPoint.file_size=basestation_size
@@ -180,7 +180,7 @@ class SDStorage_Controller( Controller ):
       def search_AR_MEC(self,data,mac_id,net):
           found=False
           #print ("controller received AR request for id:%s"%data)
-          for ap in net.accessPoints:
+          for ap in net.aps:
               if(ap.params['mac'] == mac_id):
                   continue
               else:
@@ -211,7 +211,7 @@ class SDStorage_Controller( Controller ):
 
       def update_AccessPoint_Mec(self,used_space,mac_id,net):
           #print ("controller->Update MEC[%s] storage with %s datasize",used_space)
-          for ap in net.accessPoints:
+          for ap in net.aps:
               if (ap.params['mac'] == mac_id):
                   ap.Used_space+=used_space
                   msg=[]

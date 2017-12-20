@@ -95,7 +95,7 @@ class SD_RSU (UserAP):
     def listMecContents(self, mode, net):
         if(mode == Modes.MEC):
             print ("[MAC Address ,   Station Capacity ,     IsStationFull ,    Num of files ,     Available space]")
-            for ap in net.accessPoints:
+            for ap in net.aps:
                 if(ap.custom_type == Type.SD_SWITCH):
                     continue
                 #ap=self.MEC
@@ -104,7 +104,7 @@ class SD_RSU (UserAP):
                 print('[%s ,\t %s ,\t %s ,\t %s ,\t %s,\t %s]' % (ap.MEC[0], ap.MEC[1], ap.MEC[2], ap.MEC[3], ap.MEC[4], ap.MEC[5]))
         elif(mode == Modes.CONTENT_DELIVERY):
             print ("[MAC Address]\t{AR Library} \n ***************************")
-            for ap in net.accessPoints:
+            for ap in net.aps:
                 if (ap.custom_type == Type.SD_SWITCH):
                     continue
                 print ("%s \t "%ap.MEC[0])
@@ -252,10 +252,10 @@ class SD_RSU (UserAP):
                     # are connected to each others. it has to be optimized to consider only
                     # accesspoints that are linked to the associated MEC accesspoint
                     full=True
-                    NUM_OF_APS=len(net.accessPoints)
+                    NUM_OF_APS=len(net.aps)
                     print ("Num of accesspoints is: %s"%NUM_OF_APS)
                     counter=0
-                    for ap in net.accessPoints:
+                    for ap in net.aps:
                         print ("%s accesspoints have been searched" % counter)
                         if (counter == (NUM_OF_APS - 1) or (counter+1) >= THRESHOLD): #or (counter+1) >= THRESHOLD
                             print ("All APs are full and there is %s bytes left unstored" % used_space)

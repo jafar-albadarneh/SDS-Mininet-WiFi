@@ -53,7 +53,8 @@ def topology():
 
     "Create a network."
     net = Mininet(controller=Vanet_controller, accessPoint=UserAP,
-                  switch=SD_Car_Switch, station=SD_station, enable_wmediumd=True, enable_interference=True)
+                  switch=SD_Car_Switch, station=SD_station,enable_wmediumd=True,
+                  enable_interference=True)
 
     print "*** Creating nodes"
     cars = []
@@ -82,7 +83,8 @@ def topology():
     switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch)
     c1 = net.addController(
         'c1', controller=Vanet_controller, ip='127.0.0.1', port=6653)
-    net.propagationModel("logDistancePropagationLossModel", exp=2.8)
+    # "logDistancePropagationLossModel"
+    net.propagationModel(exp=2.8)
 
     if(v2v):
         print "*** Setting bgscan"
@@ -155,9 +157,9 @@ def topology():
     # Assigning IPs for Access points wlan interfaces
     IPs = ['90','91','92','93','94','95','96']
     for i in range(0,6):
-        net.accessPoints[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
-        net.accessPoints[i].cmd('ifconfig e%s-mp2 192.168.2.%s'%(i+1,i+1))
-        net.accessPoints[i].extIP = '192.168.0.%s'%(IPs[i])
+        net.aps[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
+        net.aps[i].cmd('ifconfig e%s-mp2 192.168.2.%s'%(i+1,i+1))
+        net.aps[i].extIP = '192.168.0.%s'%(IPs[i])
 
     c1.initializeNetworkResources(net)
 

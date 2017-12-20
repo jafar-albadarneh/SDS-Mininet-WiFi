@@ -25,9 +25,9 @@ class SDStorage_Station(Station):
 
             # request AR content from associated accessPoint first
             index = 0
-            for accessPoint in net.accessPoints:
+            for accessPoint in net.aps:
                 if (accessPoint.params['mac'] == ap.params['mac']):
-                    result = net.accessPoints[index].handleContentRequest(
+                    result = net.aps[index].handleContentRequest(
                         content_identifier, net)
                     # print ("result in station: %s"%result)
                     break
