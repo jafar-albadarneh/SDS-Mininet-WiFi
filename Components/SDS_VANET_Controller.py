@@ -194,6 +194,11 @@ class SDVanet_Controller( Controller ):
                   #send message to access point
                   self.send_msg_to_accesspoint("Update",station,msg,net)
 
+      def getExternalIP(self,mec):
+        result = mec.cmd('ifconfig %s | grep "inet addr"'%mec.params['wlan'][1])
+        ip_address = result.split()[1].split(':')[1]
+        return ip_address
+
       def sendTrafficToMEC(self,source,destination,dataSize,net):
           """ Responsible for sending data traffic to a specific MEC node using D-ITG """
 
@@ -201,7 +206,7 @@ class SDVanet_Controller( Controller ):
           destination.cmdPrint("ITGRecv &")
 
           """ Send Traffic among neighboring MEC nodes """
-          destinationIP = source.params['wlan'][0] # TODO: fetch source-mp2 inft IP
+          destinationIP = self.getExternalIP(destination)
           protocol = ITG.protocol # -T
           generationDuration = ITG.generationDuration # -t
           numOfkilobytes = dataSize # -r
