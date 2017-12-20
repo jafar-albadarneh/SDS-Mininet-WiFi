@@ -65,17 +65,17 @@ class SD_Car(Car):
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]
             index = 0
-            for accessPoint in net.accessPoints:
+            for accessPoint in net.aps:
                 if(op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.accessPoints[index].handleContentRequest(
+                        result = net.aps[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
                         index += 1
                 else:  # v2v (bgscan enabled)
                     if (self.getAssociatedAP() in accessPoint.params['mac']):
-                        result = net.accessPoints[index].handleContentRequest(
+                        result = net.aps[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -95,14 +95,14 @@ class SD_Car(Car):
                 break
             index = 0
             # search if the accesspoint
-            for accessPoint in net.accessPoints:
+            for accessPoint in net.aps:
                 if (accessPoint.custom_type == Type.SD_SWITCH):
                     continue
                 if (accessPoint.params['mac'] == ap.params['mac']):
-                    net.accessPoints[index].store_data(datasize, net)
+                    net.aps[index].store_data(datasize, net)
                     print "an accessPoint found index %s" % index
                     break
                 else:
                     index += 1
-                # print "Total number of searched accessPoints are: %s"%(index+1)
+                # print "Total number of searched aps are: %s"%(index+1)
         # TODO: add v2v storage mode

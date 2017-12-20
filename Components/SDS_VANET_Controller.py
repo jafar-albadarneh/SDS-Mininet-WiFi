@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from mininet.node import OVSSwitch,UserSwitch, Host, Controller, RemoteController
+from mininet.node import OVSSwitch,UserSwitch, Host, Controller, Switch, Car, AP
 from mininet.topo import Topo
 from mininet.cli import CLI
 from mininet.net import Mininet
@@ -27,15 +27,15 @@ class SDVanet_Controller( Controller ):
               if(host.custom_type == Type.SD_CLOUD_HOST):
                   msg=[]
                   msg.append(host.IP())
-                  Fun1=self.get_capacity(host,host.type)
+                  Fun1=self.get_capacity(host,Type.HOST)
                   msg.append(Fun1)
-                  Fun2=self.isFull(host,host.type)
+                  Fun2=self.isFull(host,Type.HOST)
                   msg.append(Fun2)
-                  Fun3=self.getNumOfFiles(host,host.type)
+                  Fun3=self.getNumOfFiles(host,Type.HOST)
                   msg.append(Fun3)
-                  Fun4=self.Available_space(host,host.type)
+                  Fun4=self.Available_space(host,Type.HOST)
                   msg.append(Fun4)
-                  msg.append(host.type)
+                  msg.append(Type.HOST)
                   self.sendMsg_toSwitch("Add",host,msg,net)
               else:
                   continue
@@ -51,7 +51,7 @@ class SDVanet_Controller( Controller ):
                   msg.append(files)
                   av_space = self.Available_space(switch, switch.type)
                   msg.append(av_space)"""
-                  msg.append(switch.type)
+                  msg.append(Type.SWITCH)
                   # Localizing AR contnet for each accesspoint
                   contents = []
                   for i in range(0,10):
@@ -67,19 +67,19 @@ class SDVanet_Controller( Controller ):
           for car in net.cars:
               msg=[]
               msg.append(car.IP())
-              cap=self.get_capacity(car,car.type)
+              cap=self.get_capacity(car,Type.VEHICLE)
               msg.append(cap)
-              isfull=self.isFull(car,car.type)
+              isfull=self.isFull(car,Type.VEHICLE)
               msg.append(isfull)
-              files=self.getNumOfFiles(car,car.type)
+              files=self.getNumOfFiles(car,Type.VEHICLE)
               msg.append(files)
-              av_space=self.Available_space(car,car.type)
+              av_space=self.Available_space(car,Type.VEHICLE)
               msg.append(av_space)
-              msg.append(car.type)
+              msg.append(Type.VEHICLE)
               #send message to access point
               #self.send_msg_to_accesspoint("Add",car,msg,net)
           count=0
-          for accessPoint in net.accessPoints:
+          for accessPoint in net.aps:
               #filter out accesspoints by custom_type
               if(accessPoint.custom_type == Type.SD_RSU):
                   self.RSUs.append(accessPoint)
@@ -89,15 +89,15 @@ class SDVanet_Controller( Controller ):
                   continue; #main switch does not hold any MEC related function
               msg=[]
               msg.append(accessPoint.params['mac'])
-              cap=self.get_capacity(accessPoint,accessPoint.type)
+              cap=self.get_capacity(accessPoint,Type.ACCESSPOINT)
               msg.append(cap)
-              isfull=self.isFull(accessPoint,accessPoint.type)
+              isfull=self.isFull(accessPoint,Type.ACCESSPOINT)
               msg.append(isfull)
-              files=self.getNumOfFiles(accessPoint,accessPoint.type)
+              files=self.getNumOfFiles(accessPoint,Type.ACCESSPOINT)
               msg.append(files)
-              av_space=self.Available_space(accessPoint,accessPoint.type)
+              av_space=self.Available_space(accessPoint,Type.ACCESSPOINT)
               msg.append(av_space)
-              msg.append(accessPoint.type)
+              msg.append(Type.ACCESSPOINT)
               #Localizing AR contnet for each accesspoint
               contents=[]
               contents.append(cLibrary[count])
@@ -136,14 +136,14 @@ class SDVanet_Controller( Controller ):
 
       def sendMsg_toSwitch(self,operation,node,FT,net):
           " Send a message to the switch to notify it with any change "
-          if(node.type == Type.SWITCH):
+          if isinstance(node, Switch):
             node.Handle_controller_packets(operation,FT)
 
       def send_msg_to_accesspoint(self,operation,node,FT,net):
           "send a message to the access point to notify the changes "
-          if(node.type == Type.ACCESSPOINT):
+          if isinstance(node, AP):
               node.handleControllerUpdateRequest(operation, FT)
-          elif(node.type == Type.VEHICLE):
+          elif isinstance(node, Car):
               #node is car
               ap=node.params['associatedTo'][0]
               #print ("node type is %s associated to %s type"%(node.type,ap.type))
@@ -162,14 +162,14 @@ class SDVanet_Controller( Controller ):
                  msg=[]
                  msg.append(host.IP())
 
-                 Fun1=self.get_capacity(host,host.type)
+                 Fun1=self.get_capacity(host,Type.HOST)
                  #print host.Used_space ,host.NO_of_Dir ,host.NO_of_files,host.file_size, host.name
                  msg.append(Fun1)
-                 Fun2=self.isFull(host,host.type)
+                 Fun2=self.isFull(host,Type.HOST)
                  msg.append(Fun2)
-                 Fun3=self.getNumOfFiles(host,host.type)
+                 Fun3=self.getNumOfFiles(host,Type.HOST)
                  msg.append(Fun3)
-                 Fun4=self.Available_space(host,host.type)
+                 Fun4=self.Available_space(host,Type.HOST)
                  msg.append(Fun4)
 
                  self.sendMsg_toSwitch("Update",msg,net)
@@ -183,13 +183,13 @@ class SDVanet_Controller( Controller ):
                   station.Used_space+=used_space
                   msg=[]
                   msg.append(station.IP())
-                  cap=self.get_capacity(station,station.type)
+                  cap=self.get_capacity(station,Type.STATION)
                   msg.append(cap)
-                  isfull=self.isFull(station,station.type)
+                  isfull=self.isFull(station,Type.STATION)
                   msg.append(isfull)
-                  files=self.getNumOfFiles(station,station.type)
+                  files=self.getNumOfFiles(station,Type.STATION)
                   msg.append(files)
-                  av_space=self.Available_space(station,station.type)
+                  av_space=self.Available_space(station,Type.STATION)
                   msg.append(av_space)
                   #send message to access point
                   self.send_msg_to_accesspoint("Update",station,msg,net)
@@ -228,7 +228,7 @@ class SDVanet_Controller( Controller ):
           THRESHOLD = 4
           counter = 1
           #print ("controller received AR request for id:%s"%data)
-          for ap in net.accessPoints:
+          for ap in net.aps:
               if (counter >= THRESHOLD):
                   #print ("counter is %s"%counter)
                   break
@@ -286,44 +286,44 @@ class SDVanet_Controller( Controller ):
 
       def update_AccessPoint_Mec(self,used_space,mac_id,net):
           #print ("controller->Update MEC[%s] storage with %s datasize",used_space)
-          for ap in net.accessPoints:
+          for ap in net.aps:
               if (ap.custom_type == Type.SD_SWITCH):
                   continue
               if (ap.params['mac'] == mac_id):
                   ap.Used_space+=used_space
                   msg=[]
                   msg.append(ap.params['mac'])
-                  cap=self.get_capacity(ap,ap.type)
+                  cap=self.get_capacity(ap,Type.ACCESSPOINT)
                   msg.append(cap)
-                  isfull=self.isFull(ap,ap.type)
+                  isfull=self.isFull(ap,Type.ACCESSPOINT)
                   msg.append(isfull)
-                  files=self.getNumOfFiles(ap,ap.type)
+                  files=self.getNumOfFiles(ap,Type.ACCESSPOINT)
                   msg.append(files)
-                  av_space=self.Available_space(ap,ap.type)
+                  av_space=self.Available_space(ap,Type.ACCESSPOINT)
                   msg.append(av_space)
-                  msg.append(ap.type)
+                  msg.append(Type.ACCESSPOINT)
                   self.send_msg_to_accesspoint("mec_Update",ap,msg,net)
                   break
 
       def addRack(self, net):
           " Add a Dir to the Storage_Host."
           #TODO: check if node type (this metho were handling hosts only, and has been changed to stations)
-          for MEC in net.accessPoints:
+          for MEC in net.aps:
               if (MEC.custom_type == Type.SD_SWITCH):
                   continue
               MEC.NO_of_RACKS+=1
               msg=[]
               #msg.append(HostID)
               msg.append(MEC.params['mac'])
-              Fun1=self.get_capacity(MEC,MEC.type)
+              Fun1=self.get_capacity(MEC,Type.ACCESSPOINT)
               msg.append(Fun1)
-              Fun2=self.isFull(MEC,MEC.type)
+              Fun2=self.isFull(MEC,Type.ACCESSPOINT)
               msg.append(Fun2)
-              Fun3=self.getNumOfFiles(MEC,MEC.type)
+              Fun3=self.getNumOfFiles(MEC,Type.ACCESSPOINT)
               msg.append(Fun3)
-              Fun4=self.Available_space(MEC,MEC.type)
+              Fun4=self.Available_space(MEC,Type.ACCESSPOINT)
               msg.append(Fun4)
-              msg.append(MEC.type)
+              msg.append(Type.ACCESSPOINT)
               self.send_msg_to_accesspoint("Update",MEC,msg,net)
           return net
 

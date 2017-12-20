@@ -41,7 +41,7 @@ class SD_eNodeB (UserAP):
         if(mode == Modes.CONTENT_DELIVERY):
             print (
                 "[MAC Address]\t{AR Library} \n ***************************")
-            for ap in net.accessPoints:
+            for ap in net.aps:
                 if (ap.custom_type == Type.SD_SWITCH):
                     continue
                 print ("%s \t " % ap.MEC[0])

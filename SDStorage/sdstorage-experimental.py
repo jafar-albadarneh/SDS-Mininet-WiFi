@@ -142,7 +142,7 @@ def topology():
     SDStorage(datasize)
     print ("\n\n\n***************************END*******************************")
     print ("(MEC) info Table after the test")
-    net.accessPoints[0].listMecContents(Modes.MEC, net)
+    net.aps[0].listMecContents(Modes.MEC, net)
     print "*** Running CLI"
     CLI( net )
 
