@@ -3,6 +3,8 @@
 import os
 from mininet.node import Car
 import time
+
+from ITG import ITG
 from config import Modes,Type
 from latencyModel import latencyModel
 
@@ -75,15 +77,15 @@ class SD_C_Car(Car):
         else:
             raise ValueError("Vehicle is not connected")
 
-
     def getExternalIP(self):
-        result = self.cmd('ifconfig %s | grep "inet addr"'%self.params['wlan'][0])
-        ip_address = result.split()[1].split(':')[1]
-        return ip_address
+        return self.externalIP
 
     def decodeRXResults(self):
         receiverLog = '%s-receiver.log'%self.name
         self.cmdPrint("ITGDec %s"%receiverLog)
+
+    def sendTrafficToCar(self, car, dataSize):
+        ITG.sendTraffic(self, car, dataSize)
 
     def escalateRequest(self, content_identifier, mode, net, op):
         if (mode == Modes.MEC):

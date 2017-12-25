@@ -5,7 +5,8 @@ from mininet.topo import Topo
 from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.util import custom
-from config import Modes,Operations, Type, ITG
+from config import Modes,Operations, Type
+from ITG import ITG
 from latencyModel import latencyModel
 import time
 
@@ -194,39 +195,10 @@ class SDVanet_Controller( Controller ):
                   #send message to access point
                   self.send_msg_to_accesspoint("Update",station,msg,net)
 
-      def getExternalIP(self,mec):
-        result = mec.cmd('ifconfig %s | grep "inet addr"'%mec.params['wlan'][1])
-        ip_address = result.split()[1].split(':')[1]
-        return ip_address
 
-      def sendTrafficToMEC(self,source,destination,dataSize,net):
+      def sendTrafficToMEC(self,source,destination,dataSize = 1024):
           """ Responsible for sending data traffic to a specific MEC node using D-ITG """
-
-          """ activate ITG-Recieve Listener inside car """
-          destination.cmdPrint("ITGRecv &")
-
-          """ Send Traffic among neighboring MEC nodes """
-          destinationIP = self.getExternalIP(destination)
-          protocol = ITG.protocol # -T
-          generationDuration = ITG.generationDuration # -t
-          numOfkilobytes = dataSize # -r
-          numOfPackets = None # -z
-          # when -z,-t,-k selected, the most constructive will be applied
-          packetSize = 10 # -c
-          senderLogFile = '%s-%s'%(source.name, ITG.senderLogFile)
-          receiverLogFile = '%s-%s'%(destination.name, ITG.receiverLogFile)
-
-          source.cmdPrint("sudo ITGSend "
-                 "-T %s " # protocol
-                 "-a %s " # destination IP
-                 "-k %s " # number of kilobytes
-                 "-t %s " # generation duration 
-                 "-l %s " # sender log
-                 "-x %s" # receiver log
-                 %(protocol,destinationIP,numOfkilobytes,generationDuration,senderLogFile,receiverLogFile))
-
-
-
+          ITG.sendTraffic(source, destination, dataSize)
 
       def search_AR_MEC(self,data,mac_id,net):
           found=False
@@ -258,7 +230,6 @@ class SDVanet_Controller( Controller ):
 
 
                   time.sleep(latencyModel.nextHopLatency())
-                  #print ("counter: %s"%counter)
                   counter = counter +1
 
           if(not found):
@@ -269,7 +240,6 @@ class SDVanet_Controller( Controller ):
                           for c in content:
                               if (c[0] == data):
                                   found=True
-                                  #print("AR content found in cloud")
                                   # Consider file size when applying latency
                                   sleep_time= latencyModel.fileTransferLatency(c[0+2])
                                   #Consider num of hubs when applying latency

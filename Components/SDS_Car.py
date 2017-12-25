@@ -4,6 +4,7 @@ import os
 from mininet.node import Car
 import time
 from config import Modes,Type
+from ITG import ITG
 
 
 class SD_Car(Car):
@@ -51,14 +52,14 @@ class SD_Car(Car):
 
 
     def getExternalIP(self):
-        result = self.cmd('ifconfig %s | grep "inet addr"'%self.params['wlan'][0])
-        ip_address = result.split()[1].split(':')[1]
-        return ip_address
+        return self.externalIP
 
     def decodeRXResults(self):
         receiverLog = '%s-receiver.log'%self.name
         self.cmdPrint("ITGDec %s"%receiverLog)
 
+    def sendTrafficToCar(self, car, dataSize):
+        ITG.sendTraffic(self, car, dataSize)
 
     def escalateRequest(self, content_identifier, mode, net, op):
         if (mode == Modes.MEC):

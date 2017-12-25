@@ -15,7 +15,6 @@ from Components.SDS_Station import SDStorage_Station
 from Components.SDS_VANET_Controller import SDVanet_Controller
 from Components.SDS_eNodeB import SD_eNodeB
 from mininet.cli import CLI
-from mininet.link import TCLink
 from mininet.log import setLogLevel
 from mininet.net import Mininet
 from mininet.node import UserAP, RemoteController
@@ -133,6 +132,7 @@ def topology():
         car.cmd('ifconfig %s-wlan0 192.168.0.%s/24 up' % (car, i))
         car.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (car, i))
         car.cmd('ip route add 10.0.0.0/8 via 192.168.1.%s' % j)
+        car.externalIP = '192.168.0.%s'%i
         i += 2
         j += 2
 
@@ -159,7 +159,8 @@ def topology():
     for i in range(0,6):
         net.aps[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
         net.aps[i].cmd('ifconfig e%s-mp2 192.168.2.%s'%(i+1,i+1))
-        net.aps[i].extIP = '192.168.0.%s'%(IPs[i])
+        net.aps[i].externalIP = '192.168.0.%s'%(IPs[i])
+        net.aps[i].meshIP = '192.168.2.%s'%(i+1)
 
     c1.initializeNetworkResources(net)
 

@@ -3,6 +3,7 @@ from mininet.node import UserAP
 from operator import itemgetter
 import time
 from config import Modes,Operations,Type
+from ITG import ITG
 
 
 class SD_eNodeB (UserAP):
@@ -84,27 +85,11 @@ class SD_eNodeB (UserAP):
         #print ("result in accesspoint(Local MEC): %s"%found)
         return found
 
+    def getExternalIP(self):
+        return self.externalIP
+
+    def getMeshIP(self):
+        return self.meshIP
+
     def sendTrafficToCar(self,car,numberOfKiloBytes = 1024):
-        carIP = car.getExternalIP()
-        interface = car.params['wlan'][0]
-        """ activate ITG-Recieve Listener inside car """
-        car.cmdPrint("ITGRecv &")
-
-        """ send traffic from accessPoint """
-        protocol = 'UDP' # -T
-        generationDuration = 150 # -t
-        numOfkilobytes = numberOfKiloBytes # -r
-        numberofPackets = None # -z
-        # when -z,-t,-k selected, the most constructive will be applied
-        packetSize = 10 # -c
-        senderLogFile = '%s-sender.log'%self.name
-        receiverLogFile = '%s-receiver.log'%car.name
-
-        self.cmdPrint("sudo ITGSend "
-                 "-T %s " # protocol
-                 "-a %s " # destination IP
-                 "-k %s " # number of kilobytes
-                 "-t %s " # generation duration 
-                 "-l %s " # sender log
-                 "-x %s" # receiver log
-                 %(protocol,carIP,numOfkilobytes,generationDuration,senderLogFile,receiverLogFile))
+        ITG.sendTraffic(self,car,numberOfKiloBytes)
