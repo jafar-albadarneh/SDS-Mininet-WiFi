@@ -1,5 +1,5 @@
 #!/usr/bin/pyhton
-
+from mininet.node import UserAP, Car
 class ITG():
     """ D-ITG traffic configurations """
     protocol = 'UDP' # -T
@@ -31,7 +31,7 @@ class ITG():
         return car.getExternalIP()
 
     @staticmethod
-    def sendTraffic(source , destination, dataSize = numOfKilobytes):
+    def sendTraffic(source, destination, content):
         """ responsible for sending traffic from a source to a destination """
         """ activate ITG-Reciever Listener inside destination MEC node """
         destination.cmd("ITGRecv &")
@@ -44,12 +44,12 @@ class ITG():
         """ Send Traffic among neighboring MEC nodes """
         protocol = ITG.protocol # -T
         generationDuration = ITG.generationDuration # -t
-        numOfkilobytes = dataSize # -k
+        numOfkilobytes = content[2] # -k
         numOfPackets = None # -z
         """ when -z,-t,-k selected, the most constructive will be applied """
         packetSize = 10 # -c
-        senderLogFile = '%s-%s'%(source.name, ITG.senderLogFile)
-        receiverLogFile = '%s-%s'%(destination.name, ITG.receiverLogFile)
+        senderLogFile = '%s-%s-%s'%(source.name, content[0], ITG.senderLogFile)
+        receiverLogFile = '%s-%s-%s'%(destination.name,content[0], ITG.receiverLogFile)
 
         if(destinationIP != None):
             source.cmdPrint("sudo ITGSend "

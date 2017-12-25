@@ -202,7 +202,7 @@ def topology():
         print "*** Car2: Requesting Content for car6! ***"
         print "***********************************"
         sleep(1)
-        cars[2].RequestContent(net, 2)
+        cars[2].RequestContent(net, cars[6], 2)
         print "***********************************"
         print "*** Car2: Thank you Controller! ***"
         print "***********************************"
