@@ -79,7 +79,7 @@ def topology():
                             passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB, inNamespace=True)
 
     client = net.addHost('cloud', cls=Cloud_host)
-    switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch)
+    switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch, inNamespace=True)
     c1 = net.addController(
         'c1', controller=Vanet_controller, ip='127.0.0.1', port=6653)
     # "logDistancePropagationLossModel"
