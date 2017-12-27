@@ -192,9 +192,9 @@ class SDVanet_Controller( Controller ):
                   self.send_msg_to_accesspoint("Update",station,msg,net)
 
 
-      def sendTrafficToMEC(self,source,destination,dataSize = 1024):
+      def sendTrafficToMEC(self,source,destination,content):
           """ Responsible for sending data traffic to a specific MEC node using D-ITG """
-          ITG.sendTraffic(source, destination, dataSize)
+          ITG.sendTraffic(source, destination, content)
 
       def search_AR_MEC(self, data, mecNode, net):
           found=False

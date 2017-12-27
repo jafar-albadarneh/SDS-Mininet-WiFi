@@ -18,12 +18,12 @@ class SD_Car(Car):
         self.Used_space = Used_space
         self.custom_type = custom_type
 
-    def RequestContent(self, net, op=1):
+    def RequestContent(self, net, destinationCar, op=1):
         print ("\tcontent \t|\t Time \t\t|   Status")
         print ("-----------\t|\t ----------\t| ----------")
         for i in range(1, 11):
             start3 = time.time()
-            result = self.escalateRequest(i, Modes.MEC, net, op)
+            result = self.escalateRequest(destinationCar, i, Modes.MEC, net, op)
             if (result):
                 result = "Found"
             else:
@@ -58,10 +58,10 @@ class SD_Car(Car):
         receiverLog = '%s-receiver.log'%self.name
         self.cmdPrint("ITGDec %s"%receiverLog)
 
-    def sendTrafficToCar(self, car, dataSize):
-        ITG.sendTraffic(self, car, dataSize)
+    def sendTrafficToCar(self, car, content):
+        ITG.sendTraffic(self, car, content)
 
-    def escalateRequest(self, content_identifier, mode, net, op):
+    def escalateRequest(self, destinationCar, content_identifier, mode, net, op):
         if (mode == Modes.MEC):
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]
@@ -69,14 +69,14 @@ class SD_Car(Car):
             for accessPoint in net.aps:
                 if(op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.aps[index].handleContentRequest(
+                        result = net.aps[index].handleContentRequest(destinationCar,
                             content_identifier, net)
                         break
                     else:
                         index += 1
                 else:  # v2v (bgscan enabled)
                     if (self.getAssociatedAP() in accessPoint.params['mac']):
-                        result = net.aps[index].handleContentRequest(
+                        result = net.aps[index].handleContentRequest(destinationCar,
                             content_identifier, net)
                         break
                     else:

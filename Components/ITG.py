@@ -1,4 +1,7 @@
 #!/usr/bin/pyhton
+import os
+
+import shutil
 from mininet.node import UserAP, Car
 class ITG():
     """ D-ITG traffic configurations """
@@ -12,13 +15,13 @@ class ITG():
     receiverLogFile = 'receiver.log'
 
     @staticmethod
-    def getMecMeshIP(self, mec):
+    def getMecMeshIP(mec):
         """ responsible for getting the IP attached to the MEC "wlan1" interface
             to facilitate passing traffic among connected vehicles """
         return mec.getMeshIP()
 
     @staticmethod
-    def getMecExternalIP(self, mec):
+    def getMecExternalIP(mec):
         """ responsible for getting the IP attached to the MEC mesh "mp2" interface
             to facilitate passing traffic among neighboring mec nodes"""
         return mec.getExternalIP()
@@ -48,8 +51,13 @@ class ITG():
         numOfPackets = None # -z
         """ when -z,-t,-k selected, the most constructive will be applied """
         packetSize = 10 # -c
-        senderLogFile = '%s-%s-%s'%(source.name, content[0], ITG.senderLogFile)
-        receiverLogFile = '%s-%s-%s'%(destination.name,content[0], ITG.receiverLogFile)
+        senderLogFile = 'c%s/%s-%s-%s'%(content[0],source.name, content[0], ITG.senderLogFile)
+        receiverLogFile = 'c%s/%s-%s-%s'%(content[0],destination.name,content[0], ITG.receiverLogFile)
+
+        # create the directory if does not exists
+        directory = 'c%s'%content[0]
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
         if(destinationIP != None):
             source.cmdPrint("sudo ITGSend "
@@ -60,3 +68,6 @@ class ITG():
                  "-l %s " # sender log
                  "-x %s" # receiver log
                  %(protocol,destinationIP,numOfkilobytes,generationDuration,senderLogFile,receiverLogFile))
+
+        # DELETE LOG FOLDERS AND CONTENTS
+        # shutil.rmtree(directory, ignore_errors=False, onerror=None)
