@@ -65,7 +65,7 @@ def topology():
         start2 = time.time()
         datasize = int(datasize)
         print ("car %s want to store %s bytes" % (0, datasize))
-        car[0].store(datasize,Modes.CONTENT_DELIVERY , net)
+        car[0].store(datasize,Modes.MEC , net)
         end2 = time.time()
         with open('Storage.txt', 'a') as f:
             f.write('%.12f \n' % (end2-start2))
