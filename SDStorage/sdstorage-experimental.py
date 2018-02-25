@@ -21,6 +21,7 @@ from Components.SDS_Switch import SDStor_Switch
 from Components.SDS_Car import SD_Car
 from Components.SDS_Station import SDStorage_Station
 from Components.config import Modes
+import pdb
 
 RSU = SD_RSU
 VANET_Controller = SDVanet_Controller
@@ -34,18 +35,18 @@ def topology():
                   switch=SD_Switch, station=SD_station, enable_interference=True)
 
     print ("*** Creating nodes")
-    cars = []
+    car = []
     stas = []
     mec = []
     channel = ['1','6','11']
     NUM_OF_MECS = 4
     for x in range(0, 5):
-        cars.append(x)
+        car.append(x)
         stas.append(x)
     for x in range(0, 5):
         min = random.randint(1,10)
         max= random.randint(11,30)
-        cars[x] = net.addCar('car%s' % (x+1), wlans=1, ip='10.0.0.%s/8' % (x + 1), min_speed=min, max_speed=max,cls=SD_Car)
+        car[x] = net.addCar('car%s' % (x+1), wlans=1, ip='10.0.0.%s/8' % (x + 1), min_speed=min, max_speed=max,cls=SD_Car)
 
     c = 0
     for m in range(0, NUM_OF_MECS):
@@ -64,7 +65,8 @@ def topology():
         start2 = time.time()
         datasize = int(datasize)
         print ("car %s want to store %s bytes" % (0, datasize))
-        cars[0].store(datasize,Modes.MEC , net)
+        pdb.set_trace()
+        car[0].store(datasize,Modes.MEC, net)
         end2 = time.time()
         with open('Storage.txt', 'a') as f:
             f.write('%.12f \n' % (end2-start2))
@@ -95,43 +97,6 @@ def topology():
     print ("*** Starting network")
     net.build()
     c1.start()
-    for m in range(0,NUM_OF_MECS):
-        mec[m].start([c1])
-
-    i = 201
-    for sw in net.carsSW:
-        sw.start([c1])
-        os.system('ifconfig %s 10.0.0.%s' % (sw, i))
-        i += 1
-
-    i = 1
-    j = 2
-    for cars in cars:
-        cars.setIP('192.168.0.%s/24' % i, intf='%s-wlan0' % cars)
-        cars.setIP('192.168.1.%s/24' % i, intf='%s-eth1' % cars)
-        cars.cmd('ip route add 10.0.0.0/8 via 192.168.1.%s' % j)
-        i += 2
-        j += 2
-
-    i = 1
-    j = 2
-    for carsta in net.carsSTA:
-        carsta.setIP('10.0.0.%s/24' % i, intf='%s-mp0' % carsta)
-        carsta.setIP('192.168.1.%s/24' % j, intf='%s-eth2' % carsta)
-        # May be confuse, but it allows ping to the name instead of ip addr
-        carsta.setIP('10.0.0.%s/24' % i, intf='%s-wlan0' % carsta)
-        carsta.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-        i += 1
-        j += 2
-
-    for carsta1 in net.carsSTA:
-        i = 1
-        j = 1
-        for carsta2 in net.carsSTA:
-            if carsta1 != carsta2:
-                carsta1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j, i))
-            i += 1
-            j += 2
 
     c1.initializeNetworkResources(net)
     print ("Draw 10 roads and place the 4 MEC nodes along them?")

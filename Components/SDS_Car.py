@@ -4,7 +4,6 @@ import os
 from mininet.wifi.node import Car
 import time
 from .config import Modes,Type
-import pdb
 
 
 class SD_Car(Car):
@@ -91,8 +90,7 @@ class SD_Car(Car):
             """MEC OPERATIONS"""
             # get the accessPoint the station is attached to
             for wlan in range(0, len(self.params['wlan'])):
-                #ap = self.params['associatedTo'][0]
-                ap = self.getAssociatedAP()
+                ap = self.params['associatedTo'][0]
                 print ("Associated RSU is: %s with mac: %s" % (ap, ap.params['mac']))
                 break
             index = 0
