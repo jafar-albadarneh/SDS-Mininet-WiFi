@@ -1,7 +1,7 @@
 import sys
 from mininet.wifi.node import UserAP
 from operator import itemgetter
-from config import Modes, Operations,Type
+from .config import Modes, Operations,Type
 import time
 #TODO the implementation of this class should be identical from eNodeB class representing different functions.
 class SD_RSU (UserAP):

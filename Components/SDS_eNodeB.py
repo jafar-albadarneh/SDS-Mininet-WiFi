@@ -2,7 +2,7 @@ import sys
 from mininet.wifi.node import UserAP
 from operator import itemgetter
 import time
-from config import Modes,Operations,Type
+from .config import Modes,Operations,Type
 
 
 class SD_eNodeB (UserAP):

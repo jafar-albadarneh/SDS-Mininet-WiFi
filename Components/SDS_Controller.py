@@ -3,7 +3,7 @@ import sys
 from mininet.node import Controller
 
 import time
-from config import Operations,Type
+from .config import Operations,Type
 
 
 class SDStorage_Controller( Controller ):

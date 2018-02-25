@@ -3,8 +3,8 @@
 import os
 from mininet.wifi.node import Car
 import time
-from config import Modes,Type
-from latencyModel import latencyModel
+from .config import Modes,Type
+from .latencyModel import latencyModel
 
 
 class SD_C_Car(Car):

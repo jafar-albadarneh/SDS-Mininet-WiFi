@@ -2,8 +2,8 @@
 import sys
 from mininet.node import Controller, Switch
 from mininet.wifi.node import Car, AP
-from config import Operations, Type
-from latencyModel import latencyModel
+from .config import Operations, Type
+from .latencyModel import latencyModel
 import time
 
 from Components.contentLibrary import contentLibrary

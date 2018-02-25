@@ -3,7 +3,7 @@
 import os
 from mininet.wifi.node import Car
 import time
-from config import Modes,Type
+from .config import Modes,Type
 import pdb
 
 
@@ -102,7 +102,7 @@ class SD_Car(Car):
                     continue
                 if (accessPoint.params['mac'] == ap.params['mac']):
                     net.aps[index].store_data(datasize, net)
-                    print "an accessPoint found index %s" % index
+                    print ("an accessPoint found index %s" % index)
                     break
                 else:
                     index += 1

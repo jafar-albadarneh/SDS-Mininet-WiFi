@@ -1,7 +1,7 @@
 #!/usr/bin/pyhton
 
 from mininet.wifi.node import Station
-from config import Modes, Type
+from .config import Modes, Type
 
 
 class SDStorage_Station(Station):

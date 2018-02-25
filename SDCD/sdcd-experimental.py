@@ -40,13 +40,13 @@ class InbandController(RemoteController):
 
 def topology():
     car_type = SD_Car
-    op = raw_input("Choose Type of Experiment: (1)v2i \t (2)v2v \nChoice:")
+    op = input("Choose Type of Experiment: (1)v2i \t (2)v2v \nChoice:")
     if(op == "1"):
         v2v = False
         pass
     else:
         v2v = True
-        caching = raw_input(
+        caching = input(
             "What do you prefere to run:\n (1)car-level caching enabled (2)car-level caching disbled \nChoice: ")
         if(caching == "1"):
             car_type = SD_C_Car
@@ -58,7 +58,7 @@ def topology():
                   switch=SD_Car_Switch, station=SD_station,enable_wmediumd=True,
                   enable_interference=True)
 
-    print "*** Creating nodes"
+    print ("*** Creating nodes")
     cars = []
     stas = []
     for x in range(0, 10):
@@ -89,10 +89,10 @@ def topology():
     net.propagationModel(exp=2.8)
 
     if(v2v):
-        print "*** Setting bgscan"
+        print ("*** Setting bgscan")
         net.setBgscan(signal=-45, s_inverval=5, l_interval=10)
 
-    print "*** Configuring wifi nodes"
+    print ("*** Configuring wifi nodes")
     net.configureWifiNodes()
 
     net.addLink(switch, e1)
@@ -113,7 +113,7 @@ def topology():
     "Available Options: sumo, sumo-gui"
     net.useExternalProgram('sumo-gui', config_file='map.sumocfg')
 
-    print "*** Starting network"
+    print ("*** Starting network")
     net.build()
     c1.start()
     e1.start([c1])
@@ -166,59 +166,59 @@ def topology():
     c1.initializeNetworkResources(net)
 
     if(v2v):
-        raw_input("Press Enter to continue (wait 30sec after t=28)...")
+        input("Press Enter to continue (wait 30sec after t=28)...")
         os.system('clear')
         os.system('ovs-ofctl mod-flows car2SW in_port=2,actions=drop')
         cars[2].cmdPrint('iwconfig car2-wlan0')
         sleep(3)
         cars[6].cmdPrint('iwconfig car6-wlan0')
-        print "****************************************************"
-        print "*** Both car2 and car6 are associated to enodeB5 ***"
-        print "****************************************************"
+        print ("****************************************************")
+        print ("*** Both car2 and car6 are associated to enodeB5 ***")
+        print ("****************************************************")
         sleep(6)
         os.system('clear')
-        print "****************************************************************"
-        print "*** Car6 is so far from enodeB5. Trying to send data by car2 ***"
-        print "****************************************************************"
+        print ("****************************************************************")
+        print ("*** Car6 is so far from enodeB5. Trying to send data by car2 ***")
+        print ("****************************************************************")
         sleep(6)
         os.system('clear')
-        print "**************************************"
-        print "*** Trying to send data to car6... ***"
-        print "**************************************"
+        print ("**************************************")
+        print ("*** Trying to send data to car6... ***")
+        print ("**************************************")
         cars[2].cmdPrint('ping -c5 10.0.0.7')
-        print "****************************************************************************************************"
-        print "*** Car2: V2V is blocked! Car6 is unreachable! Controller, please let me talk directly with car6 ***"
-        print "****************************************************************************************************"
+        print ("****************************************************************************************************")
+        print ("*** Car2: V2V is blocked! Car6 is unreachable! Controller, please let me talk directly with car6 ***")
+        print ("****************************************************************************************************")
         sleep(6)
         os.system('clear')
-        print "***********************************************"
-        print "*** controller says: Car6 is now reachable! ***"
-        print "***********************************************"
+        print ("***********************************************")
+        print ("*** controller says: Car6 is now reachable! ***")
+        print ("***********************************************")
         os.system('ovs-ofctl mod-flows car2SW in_port=2,actions=1')
         sleep(6)
         os.system('clear')
         cars[2].cmdPrint('ping -c5 10.0.0.7')
         os.system('clear')
-        print "***********************************"
-        print "*** Car2: Requesting Content for car6! ***"
-        print "***********************************"
+        print ("***********************************")
+        print ("*** Car2: Requesting Content for car6! ***")
+        print ("***********************************")
         sleep(1)
         cars[2].RequestContent(net, 2)
-        print "***********************************"
-        print "*** Car2: Thank you Controller! ***"
-        print "***********************************"
+        print ("***********************************")
+        print ("*** Car2: Thank you Controller! ***")
+        print ("***********************************")
     else:
-        print "***********************************"
-        print "********  V2I experiment **********"
-        print "***********************************"
-        raw_input("PressEnter after T=28 ...")
+        print ("***********************************")
+        print ("********  V2I experiment **********")
+        print ("***********************************")
+        input("PressEnter after T=28 ...")
 
-        print "type>> py car4.RequestContent(net)"
+        print ("type>> py car4.RequestContent(net)")
 
-    print "*** Running CLI"
+    print ("*** Running CLI")
     CLI(net)
 
-    print "*** Stopping network"
+    print ("*** Stopping network")
     net.stop()
 
 
