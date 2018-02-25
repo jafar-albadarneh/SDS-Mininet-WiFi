@@ -1,12 +1,10 @@
 #!/usr/bin/pyhton
 
 import os
-from mininet.node import Car
+from mininet.wifi.node import Car
 import time
-
-from ITG import ITG
-from config import Modes,Type
-from latencyModel import latencyModel
+from .config import Modes,Type
+from .latencyModel import latencyModel
 
 
 class SD_C_Car(Car):
@@ -42,15 +40,15 @@ class SD_C_Car(Car):
         self.cLibrary.append(content)
 
 
-    def RequestContent(self, net, destinationCar, op=1):
+    def RequestContent(self, net, op=1):
         print ("\nAR content \t|\t Time \t\t|   Status")
         print ("-----------\t|\t ----------\t| ----------")
         for i in range(1, 11):
             start3 = time.time()
-            if (self.foundIncache(i, destinationCar)):
+            if (self.foundIncache(i)):
                 result = "Found/cache"
             else:
-                result = self.escalateRequest(destinationCar, i, Modes.MEC, net, op)
+                result = self.escalateRequest(i, Modes.MEC, net, op)
                 if (result):
                     result = "Found"
                 else:
@@ -77,17 +75,17 @@ class SD_C_Car(Car):
         else:
             raise ValueError("Vehicle is not connected")
 
+
     def getExternalIP(self):
-        return self.externalIP
+        result = self.cmd('ifconfig %s | grep "inet addr"'%self.params['wlan'][0])
+        ip_address = result.split()[1].split(':')[1]
+        return ip_address
 
     def decodeRXResults(self):
         receiverLog = '%s-receiver.log'%self.name
         self.cmdPrint("ITGDec %s"%receiverLog)
 
-    def sendTrafficToCar(self, car, content):
-        ITG.sendTraffic(self, car, content)
-
-    def escalateRequest(self, destinationCar, content_identifier, mode, net, op):
+    def escalateRequest(self, content_identifier, mode, net, op):
         if (mode == Modes.MEC):
             """getting accessPoint the station is associated to"""
             ap = self.params['associatedTo'][0]
@@ -95,7 +93,7 @@ class SD_C_Car(Car):
             for accessPoint in net.aps:
                 if (op == 1):
                     if (accessPoint.params['mac'] == ap.params['mac']):
-                        result = net.aps[index].handleContentRequest(destinationCar,
+                        result = net.aps[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -103,7 +101,7 @@ class SD_C_Car(Car):
                 else:  # v2v (bgscan enabled)
                     if (self.getAssociatedAP() in accessPoint.params[
                             'mac']):
-                        result = net.aps[index].handleContentRequest(destinationCar,
+                        result = net.aps[index].handleContentRequest(
                             content_identifier, net)
                         break
                     else:
@@ -114,15 +112,13 @@ class SD_C_Car(Car):
         else:
             """other modes"""
 
-    def foundIncache(self, content_identifier, destionationCar):
+    def foundIncache(self, content_identifier):
         found = False
         for content in self.cLibrary:
             #print ("the content is: %s " % content[1])
             if (content[0] == content_identifier):
                 sleep_time = latencyModel.fileTransferLatency(content[2])
                 time.sleep(sleep_time)
-                # send traffic to car (v2v)
-                self.sendTrafficToCar(destionationCar, content)
                 found = True
             else:
                 # cache search peneality in the same car

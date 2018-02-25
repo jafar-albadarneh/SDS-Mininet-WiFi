@@ -1,8 +1,8 @@
 import sys
-from mininet.node import UserAP
+from mininet.wifi.node import UserAP
+from operator import itemgetter
 import time
-from config import Modes,Operations,Type
-from ITG import ITG
+from .config import Modes,Operations,Type
 
 
 class SD_eNodeB (UserAP):
@@ -52,13 +52,13 @@ class SD_eNodeB (UserAP):
                     count += 1
                     print ("------")
 
-    def sendMsgToController(self, operation, data, sta_IP, mecNode, net):
+    def sendMsgToController(self, operation, data, sta_IP, mac_id, net):
         if(operation == Operations.CONTENT_DELIVERY):
             res = net.controllers[0].Handle_AP_message(
-                Operations.CONTENT_DELIVERY, data, None, mecNode, net)
+                Operations.CONTENT_DELIVERY, data, None, mac_id, net)
             return res
 
-    def handleContentRequest(self, destinationCar, contentIdentifier, net):
+    def handleContentRequest(self, contentIdentifier, net):
         found = False
         for AR_content in self.cLibrary:
             for c in AR_content:
@@ -68,7 +68,6 @@ class SD_eNodeB (UserAP):
                     # Consider file size when applying latency
                     sleep_time = (c[0 + 2] / 1000) * 0.0000018
                     time.sleep(sleep_time)
-                    self.sendTrafficToCar(destinationCar, c)
                     found = True
                 else:
                     # search peneality in the same MEC node
@@ -77,21 +76,35 @@ class SD_eNodeB (UserAP):
                     break
         if(not found):
             # ask the controller to search another MEC node
+            A_MEC_mac_address = self.MEC[0]
             res = self.sendMsgToController(
-                Operations.CONTENT_DELIVERY, contentIdentifier, None, self, net)
-            if(res):
-                # send traffic to car if content found in any of the neighboring mec nodes
-                # @todo receive file meta data dynamically
-                self.sendTrafficToCar(destinationCar, [1,'content',1024])
+                Operations.CONTENT_DELIVERY, contentIdentifier, None, A_MEC_mac_address, net)
+            #print ("result in accessPoint(CO MEC): %s"%res)
             return res
         #print ("result in accesspoint(Local MEC): %s"%found)
         return found
 
-    def getExternalIP(self):
-        return self.externalIP
+    def sendTrafficToCar(self,car,numberOfKiloBytes = 1024):
+        carIP = car.getExternalIP()
+        interface = car.params['wlan'][0]
+        """ activate ITG-Recieve Listener inside car """
+        car.cmdPrint("ITGRecv &")
 
-    def getMeshIP(self):
-        return self.meshIP
+        """ send traffic from accessPoint """
+        protocol = 'UDP'
+        generationDuration = 150 # -t
+        numOfkilobytes = numberOfKiloBytes # -r
+        numberofPackets = None # -z
+        # when -z,-t,-k selected, the most constructive will be applied
+        packetSize = 10 # -c
+        senderLogFile = '%s-sender.log'%self.name
+        receiverLogFile = '%s-receiver.log'%car.name
 
-    def sendTrafficToCar(self,car,content):
-        ITG.sendTraffic(self,car,content)
+        self.cmdPrint("sudo ITGSend "
+                 "-T %s " # protocol
+                 "-a %s " # destination IP
+                 "-k %s " # number of kilobytes
+                 "-t %s " # generation duration 
+                 "-l %s " # sender log
+                 "-x %s" # receiver log
+                 %(protocol,carIP,numOfkilobytes,generationDuration,senderLogFile,receiverLogFile))

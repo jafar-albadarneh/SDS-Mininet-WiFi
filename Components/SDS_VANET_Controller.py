@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import sys
-from mininet.node import Controller, Switch, Car, AP
-from config import Operations, Type
-from ITG import ITG
-from latencyModel import latencyModel
+from mininet.node import Controller, Switch
+from mininet.wifi.node import Car, AP
+from .config import Operations, Type
+from .latencyModel import latencyModel
 import time
 
 from Components.contentLibrary import contentLibrary
@@ -116,7 +116,7 @@ class SDVanet_Controller( Controller ):
           elif status == "Update":
                self.update_Switch_FT(Used_space,HostID,net)
 
-      def Handle_AP_message(self, operation, data, sta_IP, mecNode, net):
+      def Handle_AP_message(self,operation,data,sta_IP,mac_id,net):
           " Get a message from the access point and handle it"
           if (operation == "Add"):
               network=self.addRack(net)
@@ -124,9 +124,9 @@ class SDVanet_Controller( Controller ):
           elif (operation == "Update"):
               self.update_AccessPoint_FT(data,sta_IP,net)
           elif (operation == "mec_Update"):
-              self.update_AccessPoint_Mec(data, mecNode, net)
+              self.update_AccessPoint_Mec(data,mac_id,net)
           elif (operation == Operations.CONTENT_DELIVERY):
-              res=self.search_AR_MEC(data, mecNode, net)
+              res=self.search_AR_MEC(data,mac_id,net)
               return res
 
 
@@ -191,12 +191,7 @@ class SDVanet_Controller( Controller ):
                   #send message to access point
                   self.send_msg_to_accesspoint("Update",station,msg,net)
 
-
-      def sendTrafficToMEC(self,source,destination,content):
-          """ Responsible for sending data traffic to a specific MEC node using D-ITG """
-          ITG.sendTraffic(source, destination, content)
-
-      def search_AR_MEC(self, data, mecNode, net):
+      def search_AR_MEC(self,data,mac_id,net):
           found=False
           THRESHOLD = 4
           counter = 1
@@ -205,7 +200,7 @@ class SDVanet_Controller( Controller ):
               if (counter >= THRESHOLD):
                   #print ("counter is %s"%counter)
                   break
-              if(ap.params['mac'] == mecNode.params['mac']):
+              if(ap.params['mac'] == mac_id):
                   continue
               else:
                   #search AP for requested AR content
@@ -218,8 +213,7 @@ class SDVanet_Controller( Controller ):
                                   #Consider num of hubs when applying latency
                                   sleep_time+=latencyModel.nextHopLatency()
                                   time.sleep(sleep_time)
-                                  # send traffic to mec node
-                                  self.sendTrafficToMEC(ap,mecNode,c)
+                                  #print ("result in controller: %s"%found)
                                   return found
                               else:
                                   # search peneality in the same MEC node
@@ -227,6 +221,7 @@ class SDVanet_Controller( Controller ):
 
 
                   time.sleep(latencyModel.nextHopLatency())
+                  #print ("counter: %s"%counter)
                   counter = counter +1
 
           if(not found):
@@ -237,6 +232,7 @@ class SDVanet_Controller( Controller ):
                           for c in content:
                               if (c[0] == data):
                                   found=True
+                                  #print("AR content found in cloud")
                                   # Consider file size when applying latency
                                   sleep_time= latencyModel.fileTransferLatency(c[0+2])
                                   #Consider num of hubs when applying latency

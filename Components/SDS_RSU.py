@@ -1,12 +1,7 @@
 import sys
-from mininet.node import OVSKernelSwitch,UserSwitch,OVSAP,OVSKernelAP, Host, Station, UserAP
-from mininet.topo import Topo
-from mininet.cli import CLI
-from mininet.net import Mininet
-from mininet.util import custom
-from array import *
+from mininet.wifi.node import UserAP
 from operator import itemgetter
-from config import Modes, Operations,Type
+from .config import Modes, Operations,Type
 import time
 #TODO the implementation of this class should be identical from eNodeB class representing different functions.
 class SD_RSU (UserAP):

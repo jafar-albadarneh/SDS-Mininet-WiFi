@@ -4,7 +4,7 @@ import os
 from mininet.node import Host
 #from FunctionTable import *
 from Components.contentLibrary import contentLibrary
-from config import Type
+from .config import Type
 
 class Cloud_Host(Host):
 
@@ -20,4 +20,4 @@ class Cloud_Host(Host):
         """AR Content"""
         self.cLibrary = contentLibrary()
 
-        print "Cloud host has been initialized"
+        print ("Cloud host has been initialized")

@@ -6,9 +6,10 @@
 """
 import os
 import sys
+
+from mininet.wifi.net import Mininet_wifi
+from mininet.wifi.link import wmediumd
 sys.path.append('../')
-from mininet.net import Mininet
-from mininet.node import Controller,OVSKernelSwitch
 from mininet.link import TCLink
 from mininet.cli import CLI
 from mininet.log import setLogLevel
@@ -20,20 +21,20 @@ from Components.SDS_Switch import SDStor_Switch
 from Components.SDS_Car import SD_Car
 from Components.SDS_Station import SDStorage_Station
 from Components.config import Modes
+import pdb
 
 RSU = SD_RSU
 VANET_Controller = SDVanet_Controller
-SD_Switch = SDStor_Switch;
+SD_Switch = SDStor_Switch
 SD_station = SDStorage_Station
 
 def topology():
 
     "Create a network."
-    net = Mininet(controller=VANET_Controller, link=TCLink,
-                  switch=SD_Switch, station=SD_station,
-                  enable_wmediumd=True, enable_interference=True)
+    net = Mininet_wifi(controller=VANET_Controller, link=wmediumd,
+                  switch=SD_Switch, station=SD_station, enable_interference=True)
 
-    print "*** Creating nodes"
+    print ("*** Creating nodes")
     car = []
     stas = []
     mec = []
@@ -64,18 +65,18 @@ def topology():
         start2 = time.time()
         datasize = int(datasize)
         print ("car %s want to store %s bytes" % (0, datasize))
-        car[0].store(datasize,Modes.MEC , net)
+        car[0].store(datasize,Modes.MEC, net)
         end2 = time.time()
         with open('Storage.txt', 'a') as f:
             f.write('%.12f \n' % (end2-start2))
         print ("took : ", end2 - start2)
 
-    print "*** Configuring wifi nodes"
+    print ("*** Configuring wifi nodes")
     net.configureWifiNodes()
 
     #net.meshRouting('custom')
 
-    print "*** Associating and Creating links"
+    print ("*** Associating and Creating links")
     for m in range(0, NUM_OF_MECS):
         if(m < (NUM_OF_MECS-1)):
             net.addLink(mec[m],mec[m+1])
@@ -92,48 +93,9 @@ def topology():
     """Start Mobility"""
     net.startMobility(time=0)
 
-    print "*** Starting network"
+    print ("*** Starting network")
     net.build()
     c1.start()
-    for m in range(0,NUM_OF_MECS):
-        mec[m].start([c1])
-
-
-    i = 201
-    for sw in net.carsSW:
-        sw.start([c1])
-        os.system('ifconfig %s 10.0.0.%s' % (sw, i))
-        i+=1
-
-
-    i = 1
-    j = 2
-    k = 1
-    for c in car:
-        c.cmd('ifconfig %s-wlan0 192.168.0.%s/24 up' % (c,k))
-        c.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (c,i))
-        c.cmd('ip route add 10.0.0.0/8 via 192.168.1.%s' % j)
-        i+=2
-        j+=2
-        k+=1
-
-    i = 1
-    j = 2
-    for v in net.carsSTA:
-        v.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (v, j))
-        v.cmd('ifconfig %s-mp0 10.0.0.%s/24 up' % (v,i))
-        v.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-        i+=1    
-        j+=2
-
-    for v1 in net.carsSTA:
-        i = 1
-        j = 1
-        for v2 in net.carsSTA:
-            if v1 != v2: 
-                v1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j,i))
-            i+=1
-            j+=2
 
     c1.initializeNetworkResources(net)
     print ("Draw 10 roads and place the 4 MEC nodes along them?")
@@ -143,10 +105,10 @@ def topology():
     print ("\n\n\n***************************END*******************************")
     print ("(MEC) info Table after the test")
     net.aps[0].listMecContents(Modes.MEC, net)
-    print "*** Running CLI"
+    print ("*** Running CLI")
     CLI( net )
 
-    print "*** Stopping network"
+    print ("*** Stopping network")
     net.stop()
 
 if __name__ == '__main__':

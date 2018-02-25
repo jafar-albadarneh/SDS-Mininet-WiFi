@@ -2,6 +2,11 @@
 
 import os
 import sys
+
+from mininet.wifi.net import Mininet_wifi
+from mininet.wifi.link import wmediumd
+from mininet.wifi.cli import CLI_wifi
+
 sys.path.append('../')
 
 from time import sleep
@@ -16,8 +21,8 @@ from Components.SDS_VANET_Controller import SDVanet_Controller
 from Components.SDS_eNodeB import SD_eNodeB
 from mininet.cli import CLI
 from mininet.log import setLogLevel
-from mininet.net import Mininet
-from mininet.node import UserAP, RemoteController
+from mininet.node import RemoteController
+from mininet.wifi.node import UserAP
 
 from Components.SDS_Switch import SDStor_Switch
 
@@ -43,7 +48,7 @@ def topology():
         pass
     else:
         v2v = True
-        caching = raw_input(
+        caching = input(
             "What do you prefere to run:\n (1)car-level caching enabled (2)car-level caching disbled \nChoice: ")
         if(caching == "1"):
             car_type = SD_C_Car
@@ -51,11 +56,11 @@ def topology():
             car_type = SD_Car
 
     "Create a network."
-    net = Mininet(controller=Vanet_controller, accessPoint=UserAP,
-                  switch=SD_Car_Switch, station=SD_station,enable_wmediumd=True,
+    net = Mininet_wifi(controller=Vanet_controller, accessPoint=UserAP,
+                  switch=SD_Car_Switch, station=SD_station,link=wmediumd,
                   enable_interference=True)
 
-    print "*** Creating nodes"
+    print ("*** Creating nodes")
     cars = []
     stas = []
     for x in range(0, 10):
@@ -79,17 +84,17 @@ def topology():
                             passwd='123456789a', encrypt='wpa2', position='2351.68,3083.40,0', cls=eNodeB, inNamespace=True)
 
     client = net.addHost('cloud', cls=Cloud_host)
-    switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch, inNamespace=True)
+    switch = net.addSwitch('switch', dpid='4000000000000000', cls=SD_Switch)
     c1 = net.addController(
         'c1', controller=Vanet_controller, ip='127.0.0.1', port=6653)
     # "logDistancePropagationLossModel"
     net.propagationModel(exp=2.8)
 
     if(v2v):
-        print "*** Setting bgscan"
+        print ("*** Setting bgscan")
         net.setBgscan(signal=-45, s_inverval=5, l_interval=10)
 
-    print "*** Configuring wifi nodes"
+    print ("*** Configuring wifi nodes")
     net.configureWifiNodes()
 
     net.addLink(switch, e1)
@@ -110,7 +115,7 @@ def topology():
     "Available Options: sumo, sumo-gui"
     net.useExternalProgram('sumo-gui', config_file='map.sumocfg')
 
-    print "*** Starting network"
+    print ("*** Starting network")
     net.build()
     c1.start()
     e1.start([c1])
@@ -129,28 +134,29 @@ def topology():
     i = 1
     j = 2
     for car in cars:
-        car.cmd('ifconfig %s-wlan0 192.168.0.%s/24 up' % (car, i))
-        car.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (car, i))
+        car.setIP('192.168.0.%s/24' % i, intf='%s-wlan0' % car)
+        car.setIP('192.168.1.%s/24' % i, intf='%s-eth1' % car)
         car.cmd('ip route add 10.0.0.0/8 via 192.168.1.%s' % j)
-        car.externalIP = '192.168.0.%s'%i
         i += 2
         j += 2
 
     i = 1
     j = 2
-    for v in net.carsSTA:
-        v.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (v, j))
-        v.cmd('ifconfig %s-mp0 10.0.0.%s/24 up' % (v, i))
-        v.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    for carsta in net.carsSTA:
+        carsta.setIP('10.0.0.%s/24' % i, intf='%s-mp0' % carsta)
+        carsta.setIP('192.168.1.%s/24' % j, intf='%s-eth2' % carsta)
+        # May be confuse, but it allows ping to the name instead of ip addr
+        carsta.setIP('10.0.0.%s/24' % i, intf='%s-wlan0' % carsta)
+        carsta.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
         i += 1
         j += 2
 
-    for v1 in net.carsSTA:
+    for carsta1 in net.carsSTA:
         i = 1
         j = 1
-        for v2 in net.carsSTA:
-            if v1 != v2:
-                v1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j, i))
+        for carsta2 in net.carsSTA:
+            if carsta1 != carsta2:
+                carsta1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j, i))
             i += 1
             j += 2
 
@@ -159,8 +165,7 @@ def topology():
     for i in range(0,6):
         net.aps[i].cmd('ifconfig e%s-wlan1 192.168.0.%s'%(i+1,IPs[i]))
         net.aps[i].cmd('ifconfig e%s-mp2 192.168.2.%s'%(i+1,i+1))
-        net.aps[i].externalIP = '192.168.0.%s'%(IPs[i])
-        net.aps[i].meshIP = '192.168.2.%s'%(i+1)
+        net.aps[i].extIP = '192.168.0.%s'%(IPs[i])
 
     c1.initializeNetworkResources(net)
 
@@ -171,56 +176,56 @@ def topology():
         cars[2].cmdPrint('iwconfig car2-wlan0')
         sleep(3)
         cars[6].cmdPrint('iwconfig car6-wlan0')
-        print "****************************************************"
-        print "*** Both car2 and car6 are associated to enodeB5 ***"
-        print "****************************************************"
+        print ("****************************************************")
+        print ("*** Both car2 and car6 are associated to enodeB5 ***")
+        print ("****************************************************")
         sleep(6)
         os.system('clear')
-        print "****************************************************************"
-        print "*** Car6 is so far from enodeB5. Trying to send data by car2 ***"
-        print "****************************************************************"
+        print ("****************************************************************")
+        print ("*** Car6 is so far from enodeB5. Trying to send data by car2 ***")
+        print ("****************************************************************")
         sleep(6)
         os.system('clear')
-        print "**************************************"
-        print "*** Trying to send data to car6... ***"
-        print "**************************************"
+        print ("**************************************")
+        print ("*** Trying to send data to car6... ***")
+        print ("**************************************")
         cars[2].cmdPrint('ping -c5 10.0.0.7')
-        print "****************************************************************************************************"
-        print "*** Car2: V2V is blocked! Car6 is unreachable! Controller, please let me talk directly with car6 ***"
-        print "****************************************************************************************************"
+        print ("****************************************************************************************************")
+        print ("*** Car2: V2V is blocked! Car6 is unreachable! Controller, please let me talk directly with car6 ***")
+        print ("****************************************************************************************************")
         sleep(6)
         os.system('clear')
-        print "***********************************************"
-        print "*** controller says: Car6 is now reachable! ***"
-        print "***********************************************"
+        print ("***********************************************")
+        print ("*** controller says: Car6 is now reachable! ***")
+        print ("***********************************************")
         os.system('ovs-ofctl mod-flows car2SW in_port=2,actions=1')
         sleep(6)
         os.system('clear')
         cars[2].cmdPrint('ping -c5 10.0.0.7')
         os.system('clear')
-        print "***********************************"
-        print "*** Car2: Requesting Content for car6! ***"
-        print "***********************************"
+        print ("***********************************")
+        print ("*** Car2: Requesting Content for car6! ***")
+        print ("***********************************")
         sleep(1)
-        cars[2].RequestContent(net, cars[6], 2)
-        print "***********************************"
-        print "*** Car2: Thank you Controller! ***"
-        print "***********************************"
+        cars[2].RequestContent(net, 2)
+        print ("***********************************")
+        print ("*** Car2: Thank you Controller! ***")
+        print ("***********************************")
     else:
-        print "***********************************"
-        print "********  V2I experiment **********"
-        print "***********************************"
+        print ("***********************************")
+        print ("********  V2I experiment **********")
+        print ("***********************************")
         raw_input("PressEnter after T=28 ...")
 
-        print "type>> py car4.RequestContent(net)"
+        print ("type>> py car4.RequestContent(net)")
 
-    print "*** Running CLI"
-    CLI(net)
+    print ("*** Running CLI")
+    CLI_wifi(net)
 
-    print "*** Stopping network"
+    print ("*** Stopping network")
     net.stop()
 
 
 if __name__ == '__main__':
-    setLogLevel('info')
+    setLogLevel('debug')
     topology()
