@@ -4,6 +4,8 @@ import os
 import sys
 
 from mininet.wifi.net import Mininet_wifi
+from mininet.wifi.link import wmediumd
+from mininet.wifi.cli import CLI_wifi
 
 sys.path.append('../')
 
@@ -55,7 +57,7 @@ def topology():
 
     "Create a network."
     net = Mininet_wifi(controller=Vanet_controller, accessPoint=UserAP,
-                  switch=SD_Car_Switch, station=SD_station,enable_wmediumd=True,
+                  switch=SD_Car_Switch, station=SD_station,link=wmediumd,
                   enable_interference=True)
 
     print ("*** Creating nodes")
@@ -132,27 +134,29 @@ def topology():
     i = 1
     j = 2
     for car in cars:
-        car.cmd('ifconfig %s-wlan0 192.168.0.%s/24 up' % (car, i))
-        car.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (car, i))
+        car.setIP('192.168.0.%s/24' % i, intf='%s-wlan0' % car)
+        car.setIP('192.168.1.%s/24' % i, intf='%s-eth1' % car)
         car.cmd('ip route add 10.0.0.0/8 via 192.168.1.%s' % j)
         i += 2
         j += 2
 
     i = 1
     j = 2
-    for v in net.carsSTA:
-        v.cmd('ifconfig %s-eth0 192.168.1.%s/24 up' % (v, j))
-        v.cmd('ifconfig %s-mp0 10.0.0.%s/24 up' % (v, i))
-        v.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    for carsta in net.carsSTA:
+        carsta.setIP('10.0.0.%s/24' % i, intf='%s-mp0' % carsta)
+        carsta.setIP('192.168.1.%s/24' % j, intf='%s-eth2' % carsta)
+        # May be confuse, but it allows ping to the name instead of ip addr
+        carsta.setIP('10.0.0.%s/24' % i, intf='%s-wlan0' % carsta)
+        carsta.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
         i += 1
         j += 2
 
-    for v1 in net.carsSTA:
+    for carsta1 in net.carsSTA:
         i = 1
         j = 1
-        for v2 in net.carsSTA:
-            if v1 != v2:
-                v1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j, i))
+        for carsta2 in net.carsSTA:
+            if carsta1 != carsta2:
+                carsta1.cmd('route add -host 192.168.1.%s gw 10.0.0.%s' % (j, i))
             i += 1
             j += 2
 
@@ -216,12 +220,12 @@ def topology():
         print ("type>> py car4.RequestContent(net)")
 
     print ("*** Running CLI")
-    CLI(net)
+    CLI_wifi(net)
 
     print ("*** Stopping network")
     net.stop()
 
 
 if __name__ == '__main__':
-    setLogLevel('info')
+    setLogLevel('debug')
     topology()
