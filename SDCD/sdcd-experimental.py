@@ -42,7 +42,7 @@ class InbandController(RemoteController):
 
 def topology():
     car_type = SD_Car
-    op = input("Choose Type of Experiment: (1)v2i \t (2)v2v \nChoice:")
+    op = raw_input("Choose Type of Experiment: (1)v2i \t (2)v2v \nChoice:")
     if(op == "1"):
         v2v = False
         pass
@@ -170,7 +170,7 @@ def topology():
     c1.initializeNetworkResources(net)
 
     if(v2v):
-        input("Press Enter to continue (wait 30sec after t=28)...")
+        raw_input("Press Enter to continue (wait 30sec after t=28)...")
         os.system('clear')
         os.system('ovs-ofctl mod-flows car2SW in_port=2,actions=drop')
         cars[2].cmdPrint('iwconfig car2-wlan0')
@@ -215,7 +215,7 @@ def topology():
         print ("***********************************")
         print ("********  V2I experiment **********")
         print ("***********************************")
-        input("PressEnter after T=28 ...")
+        raw_input("PressEnter after T=28 ...")
 
         print ("type>> py car4.RequestContent(net)")
 

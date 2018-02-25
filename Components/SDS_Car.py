@@ -100,7 +100,7 @@ class SD_Car(Car):
             for accessPoint in net.aps:
                 if (accessPoint.custom_type == Type.SD_SWITCH):
                     continue
-                if (accessPoint.params['mac'] == ap.params['mac']):
+                if (accessPoint.params['mac'] == accessPoint.params['mac']):
                     net.aps[index].store_data(datasize, net)
                     print ("an accessPoint found index %s" % index)
                     break

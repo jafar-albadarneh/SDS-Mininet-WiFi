@@ -136,7 +136,7 @@ def topology():
     c1.initializeNetworkResources(net)
     print ("Draw 10 roads and place the 4 MEC nodes along them?")
     print ("\n\n\n***************************START*******************************")
-    datasize = input("What is the amount of storage you want (in bytes)")
+    datasize = raw_input("What is the amount of storage you want (in bytes)")
     SDStorage(datasize)
     print ("\n\n\n***************************END*******************************")
     print ("(MEC) info Table after the test")
