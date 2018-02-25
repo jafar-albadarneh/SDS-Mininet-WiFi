@@ -91,15 +91,12 @@ class SD_Car(Car):
             """MEC OPERATIONS"""
             # get the accessPoint the station is attached to
             for wlan in range(0, len(self.params['wlan'])):
-
-                pdb.set_trace()
                 #ap = self.params['associatedTo'][0]
                 ap = self.getAssociatedAP()
                 print ("Associated RSU is: %s with mac: %s" % (ap, ap.params['mac']))
                 break
             index = 0
             # search if the accesspoint
-            pdb.set_trace()
             for accessPoint in net.aps:
                 if (accessPoint.custom_type == Type.SD_SWITCH):
                     continue
