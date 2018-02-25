@@ -1,6 +1,6 @@
 #!/usr/bin/pyhton
 
-from mininet.node import Station
+from mininet.wifi.node import Station
 from config import Modes, Type
 
 

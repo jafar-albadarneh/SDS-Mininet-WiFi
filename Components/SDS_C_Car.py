@@ -1,7 +1,7 @@
 #!/usr/bin/pyhton
 
 import os
-from mininet.node import Car
+from mininet.wifi.node import Car
 import time
 from config import Modes,Type
 from latencyModel import latencyModel

@@ -1,11 +1,8 @@
 #!/usr/bin/python
 import sys
-from mininet.node import OVSSwitch,UserSwitch, Host, Controller, Switch, Car, AP
-from mininet.topo import Topo
-from mininet.cli import CLI
-from mininet.net import Mininet
-from mininet.util import custom
-from config import Modes,Operations, Type
+from mininet.node import Controller, Switch
+from mininet.wifi.node import Car, AP
+from config import Operations, Type
 from latencyModel import latencyModel
 import time
 

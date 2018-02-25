@@ -1,5 +1,5 @@
 import sys
-from mininet.node import UserAP
+from mininet.wifi.node import UserAP
 from operator import itemgetter
 import time
 from config import Modes,Operations,Type

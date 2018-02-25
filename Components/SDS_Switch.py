@@ -3,7 +3,7 @@
 from operator import itemgetter
 
 from mininet.node import OVSKernelSwitch
-from config import Modes, Operations, Type
+from config import Operations, Type
 
 
 # guppy: actual memory consumption

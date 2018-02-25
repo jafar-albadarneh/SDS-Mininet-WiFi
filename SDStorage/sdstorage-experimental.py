@@ -6,9 +6,10 @@
 """
 import os
 import sys
+
+from mininet.wifi.net import Mininet_wifi
+
 sys.path.append('../')
-from mininet.net import Mininet
-from mininet.node import Controller,OVSKernelSwitch
 from mininet.link import TCLink
 from mininet.cli import CLI
 from mininet.log import setLogLevel
@@ -23,13 +24,13 @@ from Components.config import Modes
 
 RSU = SD_RSU
 VANET_Controller = SDVanet_Controller
-SD_Switch = SDStor_Switch;
+SD_Switch = SDStor_Switch
 SD_station = SDStorage_Station
 
 def topology():
 
     "Create a network."
-    net = Mininet(controller=VANET_Controller, link=TCLink,
+    net = Mininet_wifi(controller=VANET_Controller, link=TCLink,
                   switch=SD_Switch, station=SD_station,
                   enable_wmediumd=True, enable_interference=True)
 
@@ -64,7 +65,7 @@ def topology():
         start2 = time.time()
         datasize = int(datasize)
         print ("car %s want to store %s bytes" % (0, datasize))
-        car[0].store(datasize,Modes.MEC , net)
+        car[0].store(datasize,Modes.CONTENT_DELIVERY , net)
         end2 = time.time()
         with open('Storage.txt', 'a') as f:
             f.write('%.12f \n' % (end2-start2))

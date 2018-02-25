@@ -2,6 +2,9 @@
 
 import os
 import sys
+
+from mininet.wifi.net import Mininet_wifi
+
 sys.path.append('../')
 
 from time import sleep
@@ -15,10 +18,9 @@ from Components.SDS_Station import SDStorage_Station
 from Components.SDS_VANET_Controller import SDVanet_Controller
 from Components.SDS_eNodeB import SD_eNodeB
 from mininet.cli import CLI
-from mininet.link import TCLink
 from mininet.log import setLogLevel
-from mininet.net import Mininet
-from mininet.node import UserAP, RemoteController
+from mininet.node import RemoteController
+from mininet.wifi.node import UserAP
 
 from Components.SDS_Switch import SDStor_Switch
 
@@ -52,7 +54,7 @@ def topology():
             car_type = SD_Car
 
     "Create a network."
-    net = Mininet(controller=Vanet_controller, accessPoint=UserAP,
+    net = Mininet_wifi(controller=Vanet_controller, accessPoint=UserAP,
                   switch=SD_Car_Switch, station=SD_station,enable_wmediumd=True,
                   enable_interference=True)
 
@@ -221,5 +223,5 @@ def topology():
 
 
 if __name__ == '__main__':
-    setLogLevel('debug')
+    setLogLevel('info')
     topology()

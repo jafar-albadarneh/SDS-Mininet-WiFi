@@ -1,10 +1,6 @@
 #!/usr/bin/python
 import sys
-from mininet.node import OVSSwitch,UserSwitch, Host, Controller, RemoteController
-from mininet.topo import Topo
-from mininet.cli import CLI
-from mininet.net import Mininet
-from mininet.util import custom
+from mininet.node import Controller
 
 import time
 from config import Operations,Type
@@ -284,9 +280,3 @@ class SDStorage_Controller( Controller ):
           "return total_space-used_space"
           res=self.get_capacity(node,node_type)- node.Used_space
           return res
-
-
-	 #def Used_space(self, NO_of_Dir,NO_of_files,file_size)
-         #for Dir in Dirs
-           	#	for file in files
-                 #   if file is not """
