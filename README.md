@@ -24,7 +24,7 @@ Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/79391
     There is no special configurations required to run the system, all you've to do is to clone the repo and cd into the system directory (ex. SDCD) and run the experiment.
 * Configuration
 
-    you've to follow the configuration required by Mininet-WiFi
+    - you've to follow the configuration required by Mininet-WiFi
 * Dependencies
 
     As stated in the description, the proposed systems support works as an extension to mininet wifi. so you should have mininet-wifi installed inside your machine.
@@ -33,19 +33,20 @@ Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/79391
     - SUMO Urban simulator version >= 0.28.0
     - Distributed Internet Traffic Generator (D-ITG) (latest version) can be found at: [D-ITG](http://traffic.comics.unina.it/software/ITG/download.php)
     - octave (latest version), can be found at: [Octave](http://www.octave.org/)
+    - <strong> Both Storage and Content Delivery Experimetns requires `Python2.7` </strong>
     - ~~any future dependencies will be added here~~
 * How to run tests  
 
     In order to run the experiments, follow these instructions:
     
     1) for V-SDCD, navigate to the system directory (SDCD):
-    `cd SDCD` then run the experiment via `sudo python sdcd_experimental.py`.
+    `cd SDCD` then run the experiment via `sudo python2.7 sdcd_experimental.py`.
     - The terminal will guide you to choose your experiment.
     - The Map files are hosted inside Mininet-WiFi. Once you have it installed, Mininet environment variables will be able to locate the files and grab them. 
     They can be found [here](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mininet/sumo/data/new-york.rou.xml)
     
     2) for SDStorage experiment, navigate to system directory (SDStorage):
-    `cd SDStorage` then run the experiment via `sudo python sdstorage_experimental.py`
+    `cd SDStorage` then run the experiment via `sudo python2.7 sdstorage_experimental.py`
     - Right after initializing the environemnt, a plot will be shown asking for drawing some roads for the cars. (10 roads - 4 mec nodes - 5 cars). Draw roads as connected points, and then place the mec nodes among those roads. After placing the last MEC node, the cars will be placed on the roads with random positions and speeds. 
     > please note that, for you to be able to run the experiments properly, you need to wait for car1 to be connected to one of the mec node. -a nice tip here is to place the MEC nodes near to each other-.
     
