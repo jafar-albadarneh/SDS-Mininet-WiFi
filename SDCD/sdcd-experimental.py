@@ -23,6 +23,7 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.node import RemoteController
 from mininet.wifi.node import UserAP
+from mininet.wifi.wmediumdConnector import interference
 
 from Components.SDS_Switch import SDStor_Switch
 
@@ -57,8 +58,8 @@ def topology():
 
     "Create a network."
     net = Mininet_wifi(controller=Vanet_controller, accessPoint=UserAP,
-                  switch=SD_Car_Switch, station=SD_station,link=wmediumd,
-                  enable_interference=True)
+                       switch=SD_Car_Switch, station=SD_station,link=wmediumd,
+                       wmediumd_mode=interference)
 
     print ("*** Creating nodes")
     cars = []
