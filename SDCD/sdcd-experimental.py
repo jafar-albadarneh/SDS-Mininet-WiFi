@@ -4,7 +4,7 @@ import os
 import sys
 
 from mininet.wifi.net import Mininet_wifi
-from mininet.wifi.link import wmediumd
+from mininet.wifi.link import wmediumd, mesh
 from mininet.wifi.cli import CLI_wifi
 
 sys.path.append('../')
@@ -23,6 +23,7 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.node import RemoteController
 from mininet.wifi.node import UserAP
+from mininet.wifi.wmediumdConnector import interference
 
 from Components.SDS_Switch import SDStor_Switch
 
@@ -57,8 +58,8 @@ def topology():
 
     "Create a network."
     net = Mininet_wifi(controller=Vanet_controller, accessPoint=UserAP,
-                  switch=SD_Car_Switch, station=SD_station,link=wmediumd,
-                  enable_interference=True)
+                       switch=SD_Car_Switch, station=SD_station,link=wmediumd,
+                       wmediumd_mode=interference)
 
     print ("*** Creating nodes")
     cars = []
@@ -104,13 +105,13 @@ def topology():
     net.addLink(e3, e4)
     net.addLink(e4, e5)
     net.addLink(e5, e6)"""
-
-    net.addMesh(e1, intf = 'e1-wlan2', ssid='mesh-ssid')
-    net.addMesh(e2, intf = 'e2-wlan2', ssid='mesh-ssid')
-    net.addMesh(e3, intf = 'e3-wlan2', ssid='mesh-ssid')
-    net.addMesh(e4, intf = 'e4-wlan2', ssid='mesh-ssid')
-    net.addMesh(e5, intf = 'e5-wlan2', ssid='mesh-ssid')
-    net.addMesh(e6, intf = 'e6-wlan2', ssid='mesh-ssid')
+    
+    net.addLink(e1, intf = 'e1-wlan2', cls=mesh, ssid='mesh-ssid')
+    net.addLink(e2, intf = 'e2-wlan2', cls=mesh, ssid='mesh-ssid')
+    net.addLink(e3, intf = 'e3-wlan2', cls=mesh, ssid='mesh-ssid')
+    net.addLink(e4, intf = 'e4-wlan2', cls=mesh, ssid='mesh-ssid')
+    net.addLink(e5, intf = 'e5-wlan2', cls=mesh, ssid='mesh-ssid')
+    net.addLink(e6, intf = 'e6-wlan2', cls=mesh, ssid='mesh-ssid')
 
     "Available Options: sumo, sumo-gui"
     net.useExternalProgram('sumo-gui', config_file='map.sumocfg')
