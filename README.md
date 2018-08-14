@@ -11,10 +11,13 @@ This repo holds the outcome of the collaborative work on supporting software def
 The list of supported systems are as follows: 
 
 1. [Cooperative mobile edge computing system for VANET-based software-defined content delivery](https://www.researchgate.net/publication/326546813_Cooperative_Mobile_Edge_Computing_System_for_VANET-Based_Software_Defined_Content_Delivery)
+
+>> Cite @ [Cooperative SDContent Delivey, J.Albadarneh et.al](https://www.sciencedirect.com/science/article/pii/S0045790617337187)
+
+
 2. [Software Defined Storage for Cooperative Mobile Edge Computing Systems.](https://www.researchgate.net/publication/317421285_Software_Defined_Storage_for_cooperative_Mobile_Edge_Computing_systems) 
 
-Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/7939160/)
-Cite @ [Cooperative SDContent Delivey, J.Albadarneh et.al] (https://www.sciencedirect.com/science/article/pii/S0045790617337187)
+>> Cite @ [SDStorage, J.Albadarneh et.al](http://ieeexplore.ieee.org/document/7939160/)
 
 
 
