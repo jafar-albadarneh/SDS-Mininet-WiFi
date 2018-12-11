@@ -59,7 +59,24 @@ The list of supported systems are as follows:
     
     - Once `car1` is in range of any MEC node, enter the amount of storage units the car is willing to store. Note that Each MEC node is set to have a predefined capacity of 125000 storage units. As specified in the study, auto-scaling storage capacity for MEC nodes will be triggered on-demand.
 
-* If you encountered problems with your wifi-drivers which might stops the nodes from getting connected to the experiment basestations, you need to stop your network manager and use __wpa_supplicant__ to retain your interenet connection which is needed to load the simulation environment map.    
+* If you encountered problems with your wifi-drivers which might stops the nodes from getting connected to the experiment basestations, you need to stop your network manager and use __wpa_supplicant__ to retain your interenet connection which is needed to load the simulation environment map.
+Instructions to connect using wpa_supplicant are as follows:
+```bash
+# Login as sudo user
+sudo su
+# Scan wireless networks
+sudo /sbin/iw wlan0 scan
+# Stop the network manager
+service network-manager stop
+# Register wifi network 'home-accesspoint'. You'll be prompted for wifi password
+wpa_passphrase home-accesspoint >> /etc/wpa_supplicant/file.conf
+# Connect to the network home-accesspoint
+sudo wpa_supplicant -B -D wext -i wlo1 -c /etc/wpa_supplicant/file.conf
+# Check Connection Status
+iw wl0 link :: connected
+# Add the following name servers to access the internet 8.8.8.8, 8.8.4.4
+vim /etc/resolv.conf
+```
 
 ### Having some troubles!! ###
 Don't hesitiate and go ahead submit your PRs
