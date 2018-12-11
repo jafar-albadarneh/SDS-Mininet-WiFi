@@ -33,9 +33,12 @@ The list of supported systems are as follows:
 
     As stated in the description, the proposed systems support works as an extension to mininet wifi. so you should have mininet-wifi installed inside your machine.
     you'll need: 
-    - Mininet-wifi (latest version) can be cloned at: [Mininet-WiFi](https://github.com/intrig-unicamp/mininet-wifi)
+    - Mininet-wifi (v2.2) can be cloned at: [Mininet-WiFi](https://github.com/intrig-unicamp/mininet-wifi/tree/c97b35398d985e02eaf8a33b92406ad8bbb59973).
+    
+    > Temporarily: The Experiements are compatible with mininet-wifi v2.2.
+    
     - SUMO Urban simulator version >= 0.28.0
-    - Distributed Internet Traffic Generator (D-ITG) (latest version) can be found at: [D-ITG](http://traffic.comics.unina.it/software/ITG/download.php)
+    - Distributed Internet Traffic Generator (D-ITG) (latest version) can be found at: [D-ITG](http://traffic.comics.unina.it/software/ITG/download.php). Required if planning to simulate traffic.
     - octave (latest version), can be found at: [Octave](http://www.octave.org/)
     - <strong> Both Storage and Content Delivery Experimetns requires `Python2.7` </strong>
     - ~~any future dependencies will be added here~~
